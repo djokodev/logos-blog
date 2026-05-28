@@ -76,7 +76,13 @@ nav {
   font-weight: 600;
 }
 
-.yt-icon-link {
+.social-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.social-icon-link {
   width: 44px;
   height: 44px;
   border-radius: 999px;
@@ -85,13 +91,24 @@ nav {
   justify-content: center;
   background: #fff1f0;
   border: 1px solid #ffd0cc;
-  color: #ff2a20;
 }
 
-.yt-icon-link svg {
+.social-icon-link svg {
   width: 24px;
   height: 24px;
   fill: currentColor;
+}
+
+.yt-icon-link {
+  background: #fff1f0;
+  border: 1px solid #ffd0cc;
+  color: #ff2a20;
+}
+
+.wa-icon-link {
+  background: #eefff4;
+  border: 1px solid #c6f4d6;
+  color: #1fae56;
 }
 
 .mobile-btn { display: none; }
