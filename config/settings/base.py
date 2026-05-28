@@ -18,6 +18,12 @@ if not SECRET_KEY:
 allowed_hosts_raw = os.environ.get("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_raw.split(",") if host.strip()]
 
+# Upload limits (MB -> bytes), shared by form data and file uploads.
+UPLOAD_MAX_MB = int(os.environ.get("UPLOAD_MAX_MB", "25"))
+UPLOAD_MAX_BYTES = UPLOAD_MAX_MB * 1024 * 1024
+DATA_UPLOAD_MAX_MEMORY_SIZE = UPLOAD_MAX_BYTES
+FILE_UPLOAD_MAX_MEMORY_SIZE = UPLOAD_MAX_BYTES
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'core.middleware.UploadLimitLoggingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
