@@ -10,7 +10,42 @@
   <meta property="og:description" content="{% block og_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
-  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20260528b">
+  <style>
+    .social-links {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      justify-self: end;
+    }
+    .social-icon-link {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .yt-icon-link {
+      background: #fff1f0;
+      border: 1px solid #ffd0cc;
+      color: #ff2a20;
+    }
+    .wa-icon-link {
+      background: #ffffff;
+      border: 1px solid #d7dbe2;
+      color: #000000;
+    }
+    @media (max-width: 860px) {
+      .social-links {
+        grid-column: 1 / -1;
+        justify-self: center;
+        margin-top: 0.75rem;
+      }
+    }
+  </style>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
