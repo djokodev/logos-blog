@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Bibliothèque éditoriale chrétienne francophone.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+  <header class="site-header" x-data="{open:false}">
+    <div class="container nav-wrap">
+      <a class="logo" href="{% url 'home' %}">
+        <img class="logo-mark" src="{% static 'images/logo_LOGOS.png' %}" alt="LOGOS">
+        <span>LOGOS</span>
+      </a>
+      <button class="mobile-btn" @click="open=!open">Menu</button>
+      <nav :class="open ? 'open' : ''">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'article_list' %}">Articles</a>
+        <a href="{% url 'about' %}">À propos</a>
+      </nav>
+      <a class="yt-icon-link" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.6A3 3 0 0 0 .5 7.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-4.8ZM9.6 15.4V8.6L15.8 12l-6.2 3.4Z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <div class="container foot-minimal">
+      <strong>LOGOS</strong>
+    </div>
+  </footer>
+</body>
+</html>

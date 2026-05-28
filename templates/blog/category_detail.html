@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} | LOGOS{% endblock %}
+{% block content %}
+<section class="container section section-tight">
+  <div class="list-header">
+    <h1>{{ category.name }}</h1>
+    <p>{{ category.description|default:'Articles liés à cette thématique.' }}</p>
+  </div>
+</section>
+
+<section class="container section section-list-stream">
+  {% for article in page_obj %}
+  <article class="stream-item {% cycle '' 'stream-item-reverse' %}">
+    <a class="stream-copy" href="{{ article.get_absolute_url }}">
+      <p class="stream-category">{{ article.category.name }}</p>
+      <h2>{{ article.title }}</h2>
+      <p class="stream-excerpt">{{ article.excerpt }}</p>
+      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min</div>
+    </a>
+    <a class="stream-media" href="{{ article.get_absolute_url }}">
+      {% if article.cover_image %}<img src="{{ article.cover_image.url }}" alt="{{ article.title }}">{% else %}<div class="media-placeholder">LOGOS</div>{% endif %}
+    </a>
+  </article>
+  {% empty %}
+  <p>Aucun article dans cette catégorie.</p>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+/* Stabilize Jazzmin login branding visuals */
+.login-page {
+  background: #f0f2f7 !important;
+}
+
+.login-page .login-logo img,
+.login-page .brand-image,
+.brand-link .brand-image {
+  max-height: 56px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+.login-page .login-box {
+  margin-top: 3rem !important;
+}
+
+/* Disable oversized decorative right-side image area */
+.login-page .login-box + .col,
+.login-page .col-lg-7,
+.login-page .col-md-6 {
+  background-image: none !important;
+}

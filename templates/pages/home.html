@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}LOGOS | Comprendre la foi chrétienne{% endblock %}
+{% block content %}
+<section class="container section section-tight">
+  <div class="list-header">
+    <h1>Comprendre la foi chrétienne avec profondeur et clarté</h1>
+    <p class="home-subtitle">Des questions bibliques et spirituelles<br>explorées avec sérieux, honnêteté et rigueur.</p>
+  </div>
+</section>
+
+<section class="container section section-list-stream">
+  {% if recent_articles %}
+  {% for article in recent_articles %}
+  <article class="stream-item {% cycle '' 'stream-item-reverse' %}">
+    <a class="stream-copy" href="{{ article.get_absolute_url }}">
+      <p class="stream-category">{{ article.category.name }}</p>
+      <h2>{{ article.title }}</h2>
+      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min de lecture</div>
+    </a>
+    <a class="stream-media" href="{{ article.get_absolute_url }}">
+      {% if article.cover_image %}
+        <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
+      {% else %}
+        <div class="media-placeholder">LOGOS</div>
+      {% endif %}
+    </a>
+  </article>
+  {% endfor %}
+  {% else %}
+  <article class="stream-item">
+    <div class="stream-copy">
+      <p class="stream-category">LOGOS</p>
+      <h2>Aucun article publie pour le moment</h2>
+      <p class="stream-excerpt">Les premiers contenus arriveront tres bientot. Revenez dans quelques jours pour commencer la lecture.</p>
+    </div>
+    <div class="stream-media">
+      <div class="media-placeholder">LOGOS</div>
+    </div>
+  </article>
+  {% endif %}
+</section>
+{% endblock %}

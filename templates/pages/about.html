@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}À propos | LOGOS{% endblock %}
+{% block content %}
+<section class="container section about-section">
+  <div class="about-layout">
+    <div class="about-content prose">
+      <h1>Pourquoi LOGOS ?</h1>
+      <p>LOGOS est né d'une frustration personnelle: en tant que chrétien, je me pose beaucoup de questions. Alors, je fais des recherches pour mieux comprendre, approfondir ma réflexion et faire grandir ma foi.</p>
+      <p>Avec le temps, je me suis dit que ce serait une bonne idée de partager ce cheminement avec d'autres personnes qui, elles aussi, cherchent à comprendre.</p>
+      <p>Sans prétendre tout savoir, mais avec le désir d'apprendre, de chercher, de vérifier, de réfléchir et de partager.</p>
+      <h2>Me joindre</h2>
+      <p><strong>Téléphone / WhatsApp:</strong> <a href="tel:+237652260368">+237 652 26 03 68</a></p>
+      <p><strong>Email:</strong> <a href="mailto:djokodev75@gmail.com">djokodev75@gmail.com</a></p>
+    </div>
+    <figure class="about-photo-wrap">
+      <img class="about-photo" src="{% static 'images/about-jeo.jpeg' %}" alt="Photo de l'auteur du projet LOGOS">
+    </figure>
+  </div>
+</section>
+{% endblock %}

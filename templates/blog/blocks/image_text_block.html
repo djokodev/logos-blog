@@ -1,0 +1,9 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<section class="image-text image-text--{{ value.image_position|default:'right' }} image-text--size-{{ value.image_size|default:'md' }}">
+  <div class="image-text__copy">{{ value.text|richtext }}</div>
+  {% if value.image %}
+    <figure class="image-text__media">
+      {% image value.image width-920 loading="lazy" %}
+    </figure>
+  {% endif %}
+</section>
