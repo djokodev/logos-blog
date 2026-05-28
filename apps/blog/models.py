@@ -155,6 +155,7 @@ class Article(PreviewableMixin, TimestampedModel):
     sources = models.TextField(blank=True, help_text="Sources, références, livres, liens")
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.DRAFT)
     featured = models.BooleanField(default=False)
+    view_count = models.PositiveIntegerField(default=0)
     published_at = models.DateTimeField(blank=True, null=True)
 
     objects = ArticleQuerySet.as_manager()

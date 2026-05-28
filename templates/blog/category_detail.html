@@ -15,7 +15,7 @@
       <p class="stream-category">{{ article.category.name }}</p>
       <h2>{{ article.title }}</h2>
       <p class="stream-excerpt">{{ article.excerpt }}</p>
-      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min</div>
+      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min · {{ article.view_count }} vues</div>
     </a>
     <a class="stream-media" href="{{ article.get_absolute_url }}">
       {% if article.cover_image %}<img src="{{ article.cover_image.url }}" alt="{{ article.title }}">{% else %}<div class="media-placeholder">LOGOS</div>{% endif %}

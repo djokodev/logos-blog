@@ -15,7 +15,7 @@
     <a class="stream-copy" href="{{ article.get_absolute_url }}">
       <p class="stream-category">{{ article.category.name }}</p>
       <h2>{{ article.title }}</h2>
-      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min de lecture</div>
+      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min de lecture · {{ article.view_count }} vues</div>
     </a>
     <a class="stream-media" href="{{ article.get_absolute_url }}">
       {% if article.cover_image %}

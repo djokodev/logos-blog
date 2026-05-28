@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, render
 
 from .models import Article, Category
@@ -41,13 +41,20 @@ def article_detail(request, slug):
         Article.objects.published().select_related("category").prefetch_related("tags"),
         slug=slug,
     )
+    view_cookie_name = f"article_viewed_{article.pk}"
+    should_increment = not request.COOKIES.get(view_cookie_name)
+
+    if should_increment:
+        Article.objects.filter(pk=article.pk).update(view_count=F("view_count") + 1)
+        article.view_count += 1
+
     related_articles = (
         Article.objects.published()
         .filter(category=article.category)
         .exclude(pk=article.pk)[:3]
     )
 
-    return render(
+    response = render(
         request,
         "blog/article_detail.html",
         {
@@ -55,6 +62,16 @@ def article_detail(request, slug):
             "related_articles": related_articles,
         },
     )
+    if should_increment:
+        response.set_cookie(
+            view_cookie_name,
+            "1",
+            max_age=86400,
+            httponly=True,
+            secure=request.is_secure(),
+            samesite="Lax",
+        )
+    return response
 
 
 @staff_member_required(login_url="/cms/login/")
