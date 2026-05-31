@@ -74,3 +74,9 @@ Confirm in HTML head:
 - `og:url`, `og:image`
 - `twitter:card`, `twitter:image`
 - `<script type="application/ld+json">` with `@type: "Article"`
+
+## Backup & Disaster Recovery
+
+For weekly backups (VPS + R2 + macOS pull sync) and restore procedures, see:
+
+- `docs/backup-runbook.md`

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.logos.backup.sync</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/ABSOLUTE/PATH/TO/PROJECT/scripts/backup/sync_logos_backups.sh</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>9</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/logos-backup-sync.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/logos-backup-sync.err.log</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>
