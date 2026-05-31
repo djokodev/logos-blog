@@ -41,6 +41,11 @@ for var_name in "${required_vars[@]}"; do
   fi
 done
 
+if ! command -v aws >/dev/null 2>&1; then
+  echo "aws CLI is required on VPS (command not found)." >&2
+  exit 1
+fi
+
 mkdir -p "$(dirname "${BACKUP_LOG_FILE}")"
 touch "${BACKUP_LOG_FILE}"
 exec > >(tee -a "${BACKUP_LOG_FILE}") 2>&1

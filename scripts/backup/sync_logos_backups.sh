@@ -30,6 +30,11 @@ for var_name in "${required_vars[@]}"; do
   fi
 done
 
+if ! command -v aws >/dev/null 2>&1; then
+  echo "aws CLI is required on macOS for sync (command not found)." >&2
+  exit 1
+fi
+
 mkdir -p "${LOCAL_BACKUP_DIR}"
 
 echo "$(date -Is) [INFO] Syncing backups from R2 -> ${LOCAL_BACKUP_DIR}"
