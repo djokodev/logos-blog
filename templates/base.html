@@ -6,13 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}Bibliothèque éditoriale chrétienne francophone.{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{% if SITE_URL %}{{ SITE_URL }}{{ request.path }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}">
   <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{% if SITE_URL %}{{ SITE_URL }}{{ request.path }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}{% static 'images/logo_LOGOS.png' %}?v=20260528c{% endblock %}">
+  <meta property="og:image:alt" content="{% block og_image_alt %}{{ SITE_NAME }}{% endblock %}">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta name="twitter:card" content="{% block twitter_card %}summary_large_image{% endblock %}">
+  <meta name="twitter:title" content="{% block twitter_title %}{% block twitter_title_inner %}{{ SITE_NAME }}{% endblock %}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}{% static 'images/logo_LOGOS.png' %}?v=20260528c{% endblock %}">
   <link rel="icon" type="image/png" href="{% static 'images/logo_LOGOS.png' %}?v=20260528c">
   <link rel="apple-touch-icon" href="{% static 'images/logo_LOGOS.png' %}?v=20260528c">
   <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20260528b">
+  {% block extra_head %}{% endblock %}
   <style>
     .social-links {
       display: flex;

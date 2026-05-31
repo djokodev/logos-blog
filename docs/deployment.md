@@ -41,3 +41,36 @@ sudo systemctl reload nginx
 ## Editorial Note
 
 When creating articles in `/cms`, keep each uploaded media file at or below **25 MB**.
+
+## SEO Technical Checklist (Production)
+
+To keep indexing and social previews consistent:
+
+- Set `SITE_URL=https://logos.djokodev.com` in production `.env`.
+- Keep `ALLOWED_HOSTS` aligned with your public domain.
+- Ensure host/front proxy forwards HTTPS context to the app:
+  - `X-Forwarded-Proto: https`
+  - `Host: logos.djokodev.com`
+
+### What the code now expects
+
+- Canonical URL is generated from `SITE_URL`.
+- Open Graph and Twitter image/url tags use absolute URLs.
+- Article pages expose JSON-LD (`schema.org/Article`).
+- Sitemap uses HTTPS URLs.
+- `robots.txt` advertises the absolute sitemap URL.
+
+### Quick verification commands
+
+```bash
+curl -sL https://logos.djokodev.com/robots.txt
+curl -sL https://logos.djokodev.com/sitemap.xml | head -n 20
+curl -sL https://logos.djokodev.com/articles/les-denominations-chretiennes/ | sed -n '1,120p'
+```
+
+Confirm in HTML head:
+
+- `<link rel="canonical" ...>`
+- `og:url`, `og:image`
+- `twitter:card`, `twitter:image`
+- `<script type="application/ld+json">` with `@type: "Article"`

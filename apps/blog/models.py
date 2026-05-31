@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -200,7 +201,9 @@ class Article(PreviewableMixin, TimestampedModel):
 
     @property
     def reading_time(self):
-        words = len((self.content or "").split())
+        # Prefer StreamField content when available to avoid double-counting
+        # with legacy `content` text.
+        words = 0
         if self.content_stream:
             for block in self.content_stream:
                 value = block.value
@@ -210,7 +213,11 @@ class Article(PreviewableMixin, TimestampedModel):
                     words += len(str(value.source).split())
                 elif isinstance(value, dict):
                     words += sum(len(str(v).split()) for v in value.values())
-        minutes = max(1, round(words / 220))
+        else:
+            words = len((self.content or "").split())
+
+        words_per_minute = max(120, int(getattr(settings, "READING_WORDS_PER_MINUTE", 400)))
+        minutes = max(1, round(words / words_per_minute))
         return minutes
 
 

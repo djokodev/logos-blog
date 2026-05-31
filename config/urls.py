@@ -14,6 +14,17 @@ sitemaps = {
 }
 
 
+def robots_txt(request):
+    if settings.SITE_URL:
+        sitemap_url = f"{settings.SITE_URL}/sitemap.xml"
+    else:
+        sitemap_url = request.build_absolute_uri("/sitemap.xml")
+    return HttpResponse(
+        f"User-agent: *\nAllow: /\nSitemap: {sitemap_url}",
+        content_type="text/plain",
+    )
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("cms/", include(wagtailadmin_urls)),
@@ -21,7 +32,7 @@ urlpatterns = [
     path("", include("core.urls")),
     path("articles/", include("blog.urls")),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
-    path("robots.txt", lambda request: HttpResponse("User-agent: *\nAllow: /\nSitemap: /sitemap.xml", content_type="text/plain")),
+    path("robots.txt", robots_txt),
 ]
 
 if settings.DEBUG:

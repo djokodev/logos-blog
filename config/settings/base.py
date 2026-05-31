@@ -17,12 +17,16 @@ if not SECRET_KEY:
 
 allowed_hosts_raw = os.environ.get("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_raw.split(",") if host.strip()]
+SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
 
 # Upload limits (MB -> bytes), shared by form data and file uploads.
 UPLOAD_MAX_MB = int(os.environ.get("UPLOAD_MAX_MB", "25"))
 UPLOAD_MAX_BYTES = UPLOAD_MAX_MB * 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = UPLOAD_MAX_BYTES
 FILE_UPLOAD_MAX_MEMORY_SIZE = UPLOAD_MAX_BYTES
+
+# Reading-time tuning (words per minute). Higher value = lower displayed time.
+READING_WORDS_PER_MINUTE = int(os.environ.get("READING_WORDS_PER_MINUTE", "400"))
 
 # Application definition
 INSTALLED_APPS = [

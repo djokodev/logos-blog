@@ -4,6 +4,7 @@ from .models import Article
 
 
 class ArticleSitemap(Sitemap):
+    protocol = "https"
     changefreq = "weekly"
     priority = 0.8
 
