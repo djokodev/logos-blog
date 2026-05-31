@@ -195,6 +195,19 @@ input[type='search'] { width: min(420px, 100%); }
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 4.6rem;
+  padding: clamp(1rem, 1.6vw, 1.4rem);
+  border: 1px solid rgba(2, 21, 54, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.stream-item:hover,
+.stream-item:focus-within {
+  transform: translateY(-2px);
+  border-color: rgba(201, 151, 45, 0.5);
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 12px 24px rgba(2, 21, 54, 0.1);
 }
 
 .stream-item-reverse .stream-copy { order: 1; }
@@ -240,6 +253,13 @@ input[type='search'] { width: min(420px, 100%); }
 
 .stream-copy {
   min-width: 0;
+}
+
+.stream-copy:focus-visible,
+.stream-media:focus-visible {
+  outline: 2px solid rgba(201, 151, 45, 0.75);
+  outline-offset: 6px;
+  border-radius: 8px;
 }
 
 .stream-media img,
@@ -449,6 +469,30 @@ input[type='search'] { width: min(420px, 100%); }
   margin: 4rem auto 0;
 }
 
+.article-whatsapp-cta {
+  width: min(900px, 100%);
+  margin: 3rem auto 0;
+  border: 1px solid rgba(2, 21, 54, 0.14);
+  border-radius: 14px;
+  background: #f4efe7;
+  padding: clamp(1.1rem, 2vw, 1.7rem);
+}
+
+.article-whatsapp-cta h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.1vw, 2.2rem);
+}
+
+.article-whatsapp-cta p {
+  margin: 0.65rem 0 1rem;
+  color: #3d4450;
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+}
+
+.article-whatsapp-btn {
+  background: #ffffff;
+}
+
 .related-row {
   display: flex;
   justify-content: space-between;
@@ -637,6 +681,8 @@ input[type='search'] { width: min(420px, 100%); }
   .stream-media,
   .stream-media img,
   .media-placeholder { min-height: 380px; }
+  .stream-item:hover,
+  .stream-item:focus-within { transform: translateY(-1px); }
 }
 
 @media (max-width: 860px) {
@@ -685,6 +731,7 @@ input[type='search'] { width: min(420px, 100%); }
   .minimal-filters { flex-direction: column; align-items: stretch; }
   .article-prose { width: 100%; }
   .prose p, .prose li { font-size: 1.25rem; }
+  .article-whatsapp-cta { margin-top: 2.2rem; }
   .post-nav { grid-template-columns: 1fr; text-align: center; }
   .post-nav a:first-child, .post-nav a:last-child { justify-self: center; font-size: 1.5rem; }
   .share-wrap { justify-self: center; }
