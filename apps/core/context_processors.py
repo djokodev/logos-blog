@@ -22,7 +22,7 @@ def global_context(request):
         "SITE_NAME": "LOGOS",
         "SITE_TAGLINE": "Examiner la foi, chercher la vérité",
         "SITE_DESCRIPTION": (
-            "Les grandes questions spirituelles examinées avec honnêteté et rigueur : histoire des religions, "
+            "Les questions spirituelles examinées avec honnêteté et rigueur : histoire des religions, "
             "Bible, foi et raison."
         ),
         "SITE_URL": settings.SITE_URL,
