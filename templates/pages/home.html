@@ -1,42 +1,74 @@
 {% extends 'base.html' %}
-{% block title %}LOGOS | Comprendre la foi chrétienne{% endblock %}
+{% load wagtailimages_tags %}
+{% block title %}LOGOS | Examiner la foi, chercher la vérité{% endblock %}
 {% block content %}
-<section class="container section section-tight">
-  <div class="list-header">
-    <h1>Comprendre la foi chrétienne avec profondeur et clarté</h1>
-    <p class="home-subtitle">Des questions bibliques et spirituelles<br>explorées avec sérieux, honnêteté et rigueur.</p>
+<section class="container hero">
+  <p class="eyebrow">Carnet de recherche spirituelle</p>
+  <h1>Examiner la foi, <em>chercher la vérité.</em></h1>
+  <p class="hero-lead">Je pose les grandes questions spirituelles, je remonte aux sources et à l'histoire, et je partage ce que je découvre — pour comprendre, et pour choisir en conscience ce que je crois.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="{% url 'article_list' %}">Lire les articles</a>
+    <a class="btn" href="{% url 'about' %}">Pourquoi LOGOS ?</a>
   </div>
 </section>
 
-<section class="container section section-list-stream">
-  {% if recent_articles %}
-  {% for article in recent_articles %}
-  <article class="stream-item {% cycle '' 'stream-item-reverse' %}">
-    <a class="stream-copy" href="{{ article.get_absolute_url }}">
-      <p class="stream-category">{{ article.category.name }}</p>
-      <h2>{{ article.title }}</h2>
-      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min de lecture · {{ article.view_count }} vues</div>
-    </a>
-    <a class="stream-media" href="{{ article.get_absolute_url }}">
-      {% if article.cover_image %}
-        <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
+{% if featured_article %}
+<section class="container" aria-label="Article à la une">
+  <a class="feature" href="{{ featured_article.get_absolute_url }}">
+    <div class="feature-media">
+      {% if featured_article.cover %}
+        {% picture featured_article.cover fill-{800x560,1400x980} format-{webp,jpeg} sizes="(max-width: 860px) 100vw, 640px" alt="" %}
+      {% elif featured_article.cover_image %}
+        <img src="{{ featured_article.cover_image.url }}" alt="">
       {% else %}
         <div class="media-placeholder">LOGOS</div>
       {% endif %}
-    </a>
-  </article>
-  {% endfor %}
-  {% else %}
-  <article class="stream-item">
-    <div class="stream-copy">
-      <p class="stream-category">LOGOS</p>
-      <h2>Aucun article publie pour le moment</h2>
-      <p class="stream-excerpt">Les premiers contenus arriveront tres bientot. Revenez dans quelques jours pour commencer la lecture.</p>
     </div>
-    <div class="stream-media">
-      <div class="media-placeholder">LOGOS</div>
+    <div class="feature-body">
+      <span class="chip">{{ featured_article.category.name }}</span>
+      <h2 class="sr-only">À la une</h2>
+      <h3 style="margin-top:1rem">{{ featured_article.title }}</h3>
+      <p>{{ featured_article.excerpt }}</p>
+      {% with article=featured_article %}{% include "partials/meta.html" %}{% endwith %}
+      <span class="read-more" style="margin-top:1.4rem">Lire l'article</span>
     </div>
-  </article>
-  {% endif %}
+  </a>
+</section>
+{% endif %}
+
+{% if other_articles %}
+<section class="container section">
+  <div class="section-head">
+    <h2>Derniers articles</h2>
+    <a href="{% url 'article_list' %}">Tout voir →</a>
+  </div>
+  <div class="cards">
+    {% for article in other_articles %}{% include "partials/card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if not featured_article %}
+<section class="container section"><p class="empty">Les premiers articles arrivent très bientôt.</p></section>
+{% endif %}
+
+<section class="container section manifesto">
+  <div>
+    <p class="eyebrow">La démarche</p>
+    <h2>Comprendre avant de croire, et croire en connaissance de cause.</h2>
+    <p>LOGOS est né de questions personnelles. Plutôt que de les mettre de côté, je les examine : textes, histoire, arguments des différentes traditions. Sans prétendre tout savoir, avec le désir d'apprendre et de vérifier.</p>
+    <a class="btn" href="{% url 'about' %}">En savoir plus</a>
+  </div>
+  {% include "partials/verse_proverbs.html" %}
+</section>
+
+<section class="container section">
+  <div class="community">
+    <div>
+      <h2>Une question ? Envie d'en discuter ?</h2>
+      <p>Rejoignez le groupe WhatsApp de LOGOS pour échanger, proposer des sujets et poursuivre la réflexion ensemble.</p>
+    </div>
+    <a class="btn btn-wa" href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">{% include "partials/icon_whatsapp.svg" %} Rejoindre le groupe</a>
+  </div>
 </section>
 {% endblock %}

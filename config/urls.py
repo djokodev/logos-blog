@@ -7,6 +7,7 @@ from django.urls import include, path
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from blog.feeds import LatestArticlesFeed
 from blog.sitemaps import ArticleSitemap
 
 sitemaps = {
@@ -20,7 +21,7 @@ def robots_txt(request):
     else:
         sitemap_url = request.build_absolute_uri("/sitemap.xml")
     return HttpResponse(
-        f"User-agent: *\nAllow: /\nSitemap: {sitemap_url}",
+        f"User-agent: *\nAllow: /\nDisallow: /cms/\nDisallow: /admin/\nDisallow: /articles/vue/\nSitemap: {sitemap_url}",
         content_type="text/plain",
     )
 
@@ -30,6 +31,7 @@ urlpatterns = [
     path("cms/", include(wagtailadmin_urls)),
     path("cms/documents/", include(wagtaildocs_urls)),
     path("", include("core.urls")),
+    path("articles/feed/", LatestArticlesFeed(), name="article_feed"),
     path("articles/", include("blog.urls")),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     path("robots.txt", robots_txt),

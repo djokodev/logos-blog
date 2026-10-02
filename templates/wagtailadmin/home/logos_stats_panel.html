@@ -1,0 +1,23 @@
+<section class="logos-stats w-mb-8" aria-labelledby="logos-stats-title">
+  <h2 id="logos-stats-title" class="w-h3">Lecture de LOGOS</h2>
+  <div class="logos-kpis">
+    <div><strong>{{ views_7 }}</strong><span>lecteurs (7 jours)</span></div>
+    <div><strong>{{ views_30 }}</strong><span>lecteurs (30 jours)</span></div>
+    <div><strong>{{ views_total }}</strong><span>lectures au total</span></div>
+    <div><strong>{{ drafts }}</strong><span>brouillon{{ drafts|pluralize }} en cours</span></div>
+  </div>
+  <div class="logos-spark" role="img" aria-label="Nouveaux lecteurs par jour sur 14 jours">
+    {% for d in days %}<div class="bar" style="--h: {{ d.pct }}%" title="{{ d.day|date:'D j M' }} : {{ d.count }}"><span>{{ d.count }}</span></div>{% endfor %}
+  </div>
+  <p class="logos-spark-legend">Nouveaux lecteurs uniques par jour (14 derniers jours)</p>
+  {% if top_articles %}
+  <table class="listing">
+    <thead><tr><th>Article</th><th>7 j</th><th>30 j</th><th>Total</th></tr></thead>
+    <tbody>
+    {% for a in top_articles %}
+      <tr><td><a href="{% url 'wagtailsnippets_blog_article:edit' a.pk %}">{{ a.title }}</a></td><td>{{ a.v7 }}</td><td>{{ a.v30 }}</td><td><strong>{{ a.view_count }}</strong></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>

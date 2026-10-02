@@ -1,0 +1,8 @@
+<section class="timeline">
+  {% if value.title %}<h3>{{ value.title }}</h3>{% endif %}
+  <ol>
+    {% for ev in value.events %}
+    <li><span class="t-date">{{ ev.date }}</span><span><span class="t-title">{{ ev.title }}</span>{% if ev.text %}<span class="t-text">{{ ev.text }}</span>{% endif %}</span></li>
+    {% endfor %}
+  </ol>
+</section>

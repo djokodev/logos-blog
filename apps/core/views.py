@@ -9,8 +9,10 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["recent_articles"] = Article.objects.published().select_related("category")[:6]
-        context["featured_categories"] = Category.objects.all()[:6]
+        published = Article.objects.published().select_related("category", "cover")
+        featured = published.filter(featured=True).first() or published.first()
+        context["featured_article"] = featured
+        context["other_articles"] = list(published.exclude(pk=featured.pk)[:6]) if featured else []
         return context
 
 

@@ -1,137 +1,83 @@
-# Backup & Restore Runbook (LOGOS)
+# Sauvegardes et restauration (LOGOS)
 
-## Overview
+> Contexte : le 2 octobre 2026 le VPS a été réinitialisé par erreur. Le blog a pu être
+> restauré grâce aux copies hors serveur (Cloudflare R2 + Mac). Ce document décrit le
+> dispositif renforcé mis en place ensuite.
 
-This runbook defines weekly backup and restore operations for LOGOS with three layers:
+## Les 4 couches
 
-1. VPS local backup (`/root/backups/logos-backend`)
-2. Offsite replication to Cloudflare R2 (`logos-backups`)
-3. Weekly pull copy on macOS (`~/Backups/logos-backend`)
+| Couche | Où | Fréquence | Rétention |
+|---|---|---|---|
+| 1. Sauvegarde locale | VPS `/root/backups/logos-backend` | tous les jours à 02:30 | 30 |
+| 2. Copie hors serveur | Cloudflare R2 `logos-backups/prod/weekly/` | tous les jours (après la 1) | 30 |
+| 3. Copie sur le Mac | `~/Backups/logos-backend` (launchd, 10:00) | tous les jours | 12 |
+| 4. Sauvegarde avant déploiement | VPS + R2 | à chaque `scripts/deploy.sh` | idem |
 
-Schedule: **Sunday 02:30 (server time)**  
-Retention: **12 backups (weeks)**.
+Chaque sauvegarde contient :
 
-## Required environment variables (VPS)
+- `db.sql.gz` — dump PostgreSQL complet (articles, révisions, utilisateurs, vues) ;
+- `media.tar.gz` — toutes les images téléversées ;
+- `content.json.gz` — **export portable** du contenu (articles, catégories, tags, images, vues),
+  réimportable même sur une autre version de PostgreSQL ou une base neuve ;
+- `checksums.sha256` et `manifest.json`.
 
-Add these variables in `/root/logos/.env`:
+## Surveillance (à ne pas oublier)
 
-```bash
-BACKUP_BASE_DIR=/root/backups/logos-backend
-BACKUP_RETENTION_WEEKS=12
-BACKUP_LOG_FILE=/var/log/logos-backup.log
-BACKUP_LOCK_FILE=/var/lock/logos-backup.lock
-R2_BUCKET_NAME=logos-backups
-R2_ENDPOINT=https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com
-R2_PREFIX=prod/weekly
-R2_ACCESS_KEY_ID=<key_id>
-R2_SECRET_ACCESS_KEY=<secret>
-MEDIA_VOLUME_NAME=logos_media_volume
-DB_CONTAINER_SERVICE=db
-```
+Le problème de 2026 : la sauvegarde échouait en silence depuis juin. Désormais, si
+`HEALTHCHECK_URL` est renseigné dans `/root/logos/.env`, le script prévient
+healthchecks.io au début, au succès et en cas d'échec. Sans succès pendant plus de 26 h,
+une alerte part par email / Telegram / WhatsApp.
 
-The scripts source `.env` automatically.
+1. Créer un compte gratuit sur https://healthchecks.io
+2. Créer un check « LOGOS backup », période 1 jour, tolérance 2 h
+3. Copier l'URL de ping dans `/root/logos/.env` : `HEALTHCHECK_URL=https://hc-ping.com/xxxx`
 
-## Scripts
-
-- `scripts/backup/backup_weekly.sh`
-  - Creates DB dump (`db.sql.gz`)
-  - Archives media volume (`media.tar.gz`)
-  - Writes checksums and manifest
-  - Uploads backup set to R2
-  - Applies 12-week retention locally and on R2
-
-- `scripts/backup/restore_test.sh [timestamp|latest]`
-  - Verifies checksums
-  - Restores DB to temporary DB (`logos_restore_test`)
-  - Extracts media archive to temporary folder
-  - Validates restored data and media presence
-  - Cleans temporary resources
-
-- `scripts/backup/sync_logos_backups.sh` (macOS)
-  - Pulls weekly backups from R2 to `~/Backups/logos-backend`
-  - Applies 12-week local retention on Mac
-
-## Manual operations
-
-From VPS:
+## Commandes utiles (sur le VPS)
 
 ```bash
 cd /root/logos
-bash scripts/backup/backup_weekly.sh
-bash scripts/backup/restore_test.sh latest
+bash scripts/backup/backup_weekly.sh          # sauvegarde manuelle
+bash scripts/backup/restore_test.sh latest    # test de restauration (base temporaire)
+tail -50 /var/log/logos-backup.log            # journal
+crontab -l                                    # planification
 ```
 
-From macOS (after configuring local env file):
+## Restauration complète sur un serveur neuf
+
+1. Préparer le serveur (Docker, Nginx, Certbot) et cloner le dépôt dans `/root/logos`.
+2. Recréer `/root/logos/.env` à partir de `.env.example` (nouveaux secrets) et des clés R2.
+3. Récupérer la dernière sauvegarde (R2 ou `~/Backups/logos-backend` du Mac) dans `/root/restore`.
+4. Créer les conteneurs et démarrer uniquement la base :
+   ```bash
+   docker compose build web && docker compose create && docker compose up -d db
+   ```
+5. Restaurer la base, puis les images :
+   ```bash
+   gunzip -c /root/restore/db.sql.gz | docker compose exec -T db psql -U logos_user -d logos_db
+   docker run --rm -v logos_media_volume:/data -v /root/restore:/backup alpine sh -c "tar -xzf /backup/media.tar.gz -C /data"
+   ```
+6. `docker compose up -d`, puis configurer Nginx + certificat (voir `docs/deployment.md`).
+
+### Variante : restaurer seulement le contenu (base neuve)
 
 ```bash
-bash /path/to/project/scripts/backup/sync_logos_backups.sh
+docker compose up -d
+gunzip -c content.json.gz > /tmp/content.json
+docker compose cp /tmp/content.json web:/tmp/content.json
+docker compose exec web python manage.py import_content /tmp/content.json --dry-run   # simulation
+docker compose exec web python manage.py import_content /tmp/content.json
+docker compose exec web python manage.py createsuperuser
 ```
 
-## Cron setup (VPS)
+## Vérifications après restauration
 
-Install weekly cron:
+- [ ] `docker compose ps` : `db`, `web`, `nginx` démarrés
+- [ ] l'accueil et un article s'affichent avec leurs images
+- [ ] connexion à `/cms/` possible
+- [ ] `bash scripts/backup/backup_weekly.sh` passe, puis `restore_test.sh latest`
 
-```cron
-30 2 * * 0 cd /root/logos && /bin/bash /root/logos/scripts/backup/backup_weekly.sh
-```
+## Rotation des clés R2
 
-Logs:
-
-- `/var/log/logos-backup.log`
-
-## macOS weekly scheduling (launchd)
-
-1. Copy `scripts/backup/com.logos.backup.sync.plist` to:
-   - `~/Library/LaunchAgents/com.logos.backup.sync.plist`
-2. Replace placeholder project path in `ProgramArguments`.
-3. Load:
-
-```bash
-launchctl unload ~/Library/LaunchAgents/com.logos.backup.sync.plist 2>/dev/null || true
-launchctl load ~/Library/LaunchAgents/com.logos.backup.sync.plist
-launchctl start com.logos.backup.sync
-```
-
-## Full migration restore procedure (new VPS)
-
-1. Deploy code and containers.
-2. Download desired backup set (DB + media + checksum + manifest).
-3. Restore DB:
-   - `gunzip -c db.sql.gz | docker compose exec -T db psql -U <user> -d <db>`
-4. Restore media:
-   - `docker run --rm -v logos_media_volume:/data -v <backup_dir>:/backup alpine sh -c "tar -xzf /backup/media.tar.gz -C /data"`
-5. Restart app:
-   - `docker compose up -d`
-6. Validate:
-   - `/`
-   - `/cms`
-   - one article with cover image
-
-## Post-restore validation checklist
-
-- [ ] `docker compose ps` healthy for `db`, `web`, `nginx`
-- [ ] `SELECT COUNT(*) FROM blog_article;` returns expected non-zero value
-- [ ] Media files present in volume
-- [ ] One article page loads with cover image
-- [ ] CMS login works
-
-## Key rotation guidance (R2)
-
-When rotating `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`:
-
-1. Create new key in Cloudflare R2 (same bucket scope).
-2. Update `/root/logos/.env`.
-3. Run manual backup test:
-   - `bash scripts/backup/backup_weekly.sh`
-4. Delete old key only after successful test.
-
-## Failure handling
-
-If backup fails:
-
-1. Inspect `/var/log/logos-backup.log`.
-2. Verify container and DB status:
-   - `docker compose ps`
-3. Verify R2 connectivity and credentials.
-4. Re-run manually after fix:
-   - `bash scripts/backup/backup_weekly.sh`
+1. Créer une nouvelle clé dans Cloudflare R2 (même bucket).
+2. Mettre à jour `/root/logos/.env` **et** `~/.config/logos-backup/env` sur le Mac.
+3. Lancer une sauvegarde manuelle, puis supprimer l'ancienne clé.

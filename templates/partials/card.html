@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+<article class="card">
+  <a class="card-media" href="{{ article.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+    {% if article.cover %}
+      {% picture article.cover fill-{480x300,960x600} format-{webp,jpeg} sizes="(max-width: 700px) 100vw, 380px" alt="" loading="lazy" %}
+    {% elif article.cover_image %}
+      <img src="{{ article.cover_image.url }}" alt="" loading="lazy">
+    {% else %}
+      <div class="media-placeholder">LOGOS</div>
+    {% endif %}
+  </a>
+  <div class="card-body">
+    <a class="chip" href="{% url 'category_detail' article.category.slug %}">{{ article.category.name }}</a>
+    <h3><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
+    <p>{{ article.excerpt }}</p>
+    {% include "partials/meta.html" %}
+  </div>
+</article>

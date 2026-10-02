@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}À propos | LOGOS{% endblock %}
+{% block meta_description %}Pourquoi LOGOS existe : examiner les grandes questions spirituelles avec honnêteté, vérifier les sources et choisir en conscience.{% endblock %}
 {% block content %}
-<section class="container section about-section">
-  <div class="about-layout">
-    <div class="about-content prose">
+<section class="container section">
+  <div class="about">
+    <div class="prose">
+      <p class="eyebrow">À propos</p>
       <h1>Pourquoi LOGOS ?</h1>
-      <p>LOGOS est né d'une frustration personnelle: en tant que "chrétien", je me pose beaucoup de questions. Alors, je fais des recherches pour mieux comprendre, approfondir ma réflexion et faire grandir ma foi.</p>
+      <p>LOGOS est né d'une frustration personnelle : en tant que « chrétien », je me pose beaucoup de questions. Alors, je fais des recherches pour mieux comprendre, approfondir ma réflexion et faire grandir ma foi.</p>
       <p>Avec le temps, je me suis dit que ce serait une bonne idée de partager ce cheminement avec d'autres personnes qui, elles aussi, cherchent à comprendre.</p>
       <p>Sans prétendre tout savoir, mais avec le désir d'apprendre, de chercher, de vérifier, de réfléchir et de partager.</p>
+      {% include "partials/verse_proverbs.html" %}
+      <p>Ce verset résume l'esprit de LOGOS : ne pas croire à la légère, ne pas rejeter à la légère, mais garder la réflexion et la raison comme compagnes de route.</p>
       <h2>Me joindre</h2>
-      <p><strong>Téléphone / WhatsApp:</strong> <a href="tel:+237652260368">+237 652 26 03 68</a></p>
-      <p><strong>Email:</strong> <a href="mailto:djokodev75@gmail.com">djokodev75@gmail.com</a></p>
+      <ul class="contact-list">
+        <li><a href="https://wa.me/237652260368" target="_blank" rel="noopener">{% include "partials/icon_whatsapp.svg" %} +237 652 26 03 68 (téléphone / WhatsApp)</a></li>
+        <li><a href="mailto:djokodev75@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.2L4 7.3V17h16V7.3l-8 4.9ZM5.2 7 12 11.1 18.8 7H5.2Z"/></svg> djokodev75@gmail.com</a></li>
+        <li><a href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">{% include "partials/icon_whatsapp.svg" %} Rejoindre le groupe de discussion LOGOS</a></li>
+      </ul>
     </div>
-    <figure class="about-photo-wrap">
-      <img class="about-photo" src="{% static 'images/about-jeo.jpeg' %}" alt="Photo de l'auteur du projet LOGOS">
+    <figure class="about-photo">
+      <img src="{% static 'images/about-jeo.jpeg' %}" alt="Portrait de l'auteur de LOGOS" loading="lazy">
     </figure>
   </div>
 </section>

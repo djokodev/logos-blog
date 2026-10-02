@@ -3,7 +3,7 @@
   <div class="image-text__copy">{{ value.text|richtext }}</div>
   {% if value.image %}
     <figure class="image-text__media">
-      {% image value.image width-920 loading="lazy" %}
+      {% picture value.image width-{500,920} format-{webp,jpeg} sizes="(max-width: 700px) 100vw, 360px" alt=value.image.title loading="lazy" %}
     </figure>
   {% endif %}
 </section>

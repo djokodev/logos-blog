@@ -45,7 +45,7 @@ class Command(BaseCommand):
                     "category": cat_objs[category_name],
                     "content": "## Introduction\n\nVoici une version de démonstration pour LOGOS.\n\n## Développement\n\n- Argument 1\n- Argument 2\n- Argument 3\n\n## Conclusion\n\nLa recherche biblique demande humilité et rigueur.",
                     "sources": "- Bible\n- Ouvrages d'histoire de l'Église\n- Notes de recherche personnelles",
-                    "status": Article.Status.PUBLISHED,
+                    "live": True,
                     "published_at": timezone.now() - timezone.timedelta(days=idx),
                     "featured": idx <= 2,
                 },

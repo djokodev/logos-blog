@@ -1,0 +1,9 @@
+{% load wagtailimages_tags %}
+<figure class="figure figure--{{ value.width }}">
+  {% if value.width == "wide" %}
+    {% picture value.image width-{900,1400,2000} format-{webp,jpeg} sizes="(max-width: 1100px) 100vw, 940px" alt=value.image.title loading="lazy" %}
+  {% else %}
+    {% picture value.image width-{700,1400} format-{webp,jpeg} sizes="(max-width: 760px) 100vw, 690px" alt=value.image.title loading="lazy" %}
+  {% endif %}
+  {% if value.caption or value.credit %}<figcaption>{{ value.caption }}{% if value.credit %} <span>— {{ value.credit }}</span>{% endif %}</figcaption>{% endif %}
+</figure>

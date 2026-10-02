@@ -1,160 +1,146 @@
 {% extends 'base.html' %}
-{% load blog_extras %}
-{% load wagtailcore_tags %}
+{% load blog_extras wagtailcore_tags wagtailimages_tags %}
 {% block title %}{{ article.title }} | LOGOS{% endblock %}
 {% block meta_description %}{{ article.excerpt|striptags|truncatechars:180 }}{% endblock %}
-{% block canonical_url %}{% if SITE_URL %}{{ SITE_URL }}{{ article.get_absolute_url }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}
-{% block og_title %}{{ article.title }} | LOGOS{% endblock %}
-{% block og_description %}{{ article.excerpt|striptags|truncatechars:180 }}{% endblock %}
+{% block canonical_url %}{{ BASE_URL }}{{ article.get_absolute_url }}{% endblock %}
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.excerpt|striptags|truncatechars:200 }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}{% if SITE_URL %}{{ SITE_URL }}{{ article.get_absolute_url }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}
-{% block og_image %}{% if article.cover_image %}{% if SITE_URL %}{{ SITE_URL }}{{ article.cover_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ article.cover_image.url }}{% endif %}{% else %}{{ block.super }}{% endif %}{% endblock %}
-{% block og_image_alt %}
-  {% if article.cover_image %}
-    Image de couverture - {{ article.title }}
-  {% else %}
-    {{ block.super }}
-  {% endif %}
-{% endblock %}
-{% block twitter_title %}{{ article.title }} | LOGOS{% endblock %}
-{% block twitter_description %}{{ article.excerpt|striptags|truncatechars:180 }}{% endblock %}
-{% block twitter_image %}{% if article.cover_image %}{% if SITE_URL %}{{ SITE_URL }}{{ article.cover_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ article.cover_image.url }}{% endif %}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block og_url %}{{ BASE_URL }}{{ article.get_absolute_url }}{% endblock %}
+{% block og_image %}{% if article.cover %}{% image article.cover fill-1200x630 format-jpeg as og %}{{ BASE_URL }}{{ og.url }}{% elif article.cover_image %}{{ BASE_URL }}{{ article.cover_image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block og_image_alt %}{{ article.title }}{% endblock %}
+{% block twitter_title %}{{ article.title }}{% endblock %}
+{% block twitter_description %}{{ article.excerpt|striptags|truncatechars:200 }}{% endblock %}
+{% block twitter_image %}{% if article.cover %}{% image article.cover fill-1200x630 format-jpeg as tw %}{{ BASE_URL }}{{ tw.url }}{% elif article.cover_image %}{{ BASE_URL }}{{ article.cover_image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block extra_head %}
-  {{ block.super }}
+  {% if article.cover %}<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">{% endif %}
   <meta property="article:published_time" content="{{ article.published_at|date:'c' }}">
   <meta property="article:modified_time" content="{{ article.updated_at|date:'c' }}">
+  <meta property="article:section" content="{{ article.category.name }}">
+  {% for tag in article.tags.all %}<meta property="article:tag" content="{{ tag.name }}">{% endfor %}
+  {% if preview_mode %}<meta name="robots" content="noindex">{% endif %}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "mainEntityOfPage": "{% if SITE_URL %}{{ SITE_URL }}{{ article.get_absolute_url }}{% else %}{{ request.build_absolute_uri }}{% endif %}",
+    "mainEntityOfPage": "{{ BASE_URL }}{{ article.get_absolute_url }}",
     "headline": "{{ article.title|striptags|escapejs }}",
     "description": "{{ article.excerpt|striptags|truncatechars:180|escapejs }}",
-    "image": "{% if article.cover_image %}{% if SITE_URL %}{{ SITE_URL }}{{ article.cover_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ article.cover_image.url }}{% endif %}{% else %}{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}/static/images/logo_LOGOS.png?v=20260528c{% endif %}",
+    "image": "{% if article.cover %}{% image article.cover fill-1200x630 format-jpeg as ld %}{{ BASE_URL }}{{ ld.url }}{% elif article.cover_image %}{{ BASE_URL }}{{ article.cover_image.url }}{% else %}{{ BASE_URL }}/static/images/logo_LOGOS.png{% endif %}",
     "datePublished": "{{ article.published_at|date:'c' }}",
     "dateModified": "{{ article.updated_at|date:'c' }}",
-    "author": {
-      "@type": "Organization",
-      "name": "LOGOS"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "LOGOS",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}/static/images/logo_LOGOS.png?v=20260528c"
-      }
-    }
+    "inLanguage": "fr",
+    "articleSection": "{{ article.category.name|escapejs }}",
+    "author": {"@type": "Organization", "name": "LOGOS", "url": "{{ BASE_URL }}/a-propos/"},
+    "publisher": {"@type": "Organization", "name": "LOGOS", "logo": {"@type": "ImageObject", "url": "{{ BASE_URL }}/static/images/logo_LOGOS.png"}}
   }
   </script>
 {% endblock %}
+
+{% block progress %}<div class="progress" aria-hidden="true"></div>{% endblock %}
+
 {% block content %}
-<article class="container article-layout">
-  {% if preview_mode %}
-  <div class="notice-pill" style="margin: 1rem 0 1.5rem;">
-    Prévisualisation brouillon (Live Preview) - non publiée.
-  </div>
-  {% endif %}
-  <header class="article-hero">
-    <p class="article-kicker">{{ article.category.name }}</p>
+{% if preview_mode %}<div class="preview-banner">Aperçu — cette version n'est pas publiée.</div>{% endif %}
+<article data-article
+         {% if preview_mode %}data-preview{% endif %}
+         data-view-url="{% if article.pk %}{% url 'article_view_beacon' article.pk %}{% endif %}"
+         data-csrf="{{ csrf_token }}">
+  <header class="container article-head">
+    {% if article.category_id %}<a class="chip" href="{% url 'category_detail' article.category.slug %}">{{ article.category.name }}</a>{% endif %}
     <h1>{{ article.title }}</h1>
-    <div class="article-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min de lecture · {{ article.view_count }} vues</div>
+    {% if article.excerpt %}<p class="article-lead">{{ article.excerpt }}</p>{% endif %}
+    {% if article.published_at %}{% include "partials/meta.html" %}{% endif %}
   </header>
 
-  {% if article.cover_image %}
-    <figure class="article-cover-wrap">
-      <img class="article-cover" src="{{ article.cover_image.url }}" alt="{{ article.title }}">
+  {% if article.cover %}
+    <figure class="container article-cover">
+      {% picture article.cover fill-{800x450,1200x675,2200x1238} format-{webp,jpeg} sizes="(max-width: 1100px) 100vw, 1100px" alt="" fetchpriority="high" %}
     </figure>
+  {% elif article.cover_image %}
+    <figure class="container article-cover"><img src="{{ article.cover_image.url }}" alt="" fetchpriority="high"></figure>
   {% endif %}
 
-  {% if article.content_stream %}
-  <div class="article-prose prose stream-content">
-    {% for block in article.content_stream %}
-      {% include_block block %}
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="article-prose prose">{{ article.content|markdownify }}</div>
-  {% endif %}
+  <div class="container article-body">
+    <aside class="toc" hidden aria-label="Sommaire">
+      <div class="toc-inner">
+        <h2>Sommaire</h2>
+        <ol data-toc></ol>
+      </div>
+    </aside>
 
-  {% if article.sources %}
-  <section class="article-prose">
-    <h2>Sources et références</h2>
-    <div class="prose">{{ article.sources|markdownify }}</div>
-  </section>
-  {% endif %}
-
-  {% if article.youtube_url %}
-  <section class="article-video-end">
-    <div class="article-prose">
-      <h2>Vidéo associée</h2>
-      <p><a class="btn-minimal" href="{{ article.youtube_url }}" target="_blank" rel="noopener">Regarder sur YouTube</a></p>
+    <div class="toc-mobile" hidden>
+      <details>
+        <summary>Sommaire</summary>
+        <ol data-toc-mobile></ol>
+      </details>
     </div>
-    {% with embed=article.youtube_url|youtube_embed_url %}
-      {% if embed %}
-      {% with origin=request.scheme|add:"://"|add:request.get_host %}
-      <div class="video-wrap">
-        <iframe
-          src="{{ embed }}?rel=0&enablejsapi=1&origin={{ origin|urlencode }}"
-          title="Vidéo YouTube - {{ article.title }}"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
+
+    <div class="prose">
+      {% if article.content_stream %}
+        {% for block in article.content_stream %}{% include_block block %}{% endfor %}
+      {% else %}
+        {{ article.content|markdownify }}
+      {% endif %}
+    </div>
+
+    <div class="after-article">
+      {% if article.youtube_url %}
+        {% with embed=article.youtube_url|youtube_embed_url %}
+        {% if embed %}
+        <section aria-label="Vidéo associée">
+          <div class="section-head"><h2>Vidéo associée</h2><a href="{{ article.youtube_url }}" target="_blank" rel="noopener">Voir sur YouTube →</a></div>
+          <div class="video-wrap">
+            <iframe src="{{ embed }}?rel=0" title="Vidéo YouTube — {{ article.title }}" loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+        </section>
+        {% endif %}
+        {% endwith %}
+      {% endif %}
+
+      {% if article.sources %}
+      <section class="sources">
+        <details>
+          <summary>Sources et références</summary>
+          <div class="prose">{{ article.sources|markdownify }}</div>
+        </details>
+      </section>
+      {% endif %}
+
+      {% with share_url=BASE_URL|add:article.get_absolute_url %}
+      <div class="share">
+        <span class="share-label">Partager</span>
+        <a class="s-wa" href="https://wa.me/?text={{ article.title|urlencode }}%20%E2%80%94%20{{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">{% include "partials/icon_whatsapp.svg" %}</a>
+        <a class="s-fb" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.2c0-.9.3-1.5 1.6-1.5h1.7V5c-.3 0-1.4-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.6V11H7v3h2.6v8h3.9Z"/></svg></a>
+        <a class="s-li" href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8.5A1.5 1.5 0 1 1 6 5.5a1.5 1.5 0 0 1 0 3ZM4.5 19.5h3V10h-3v9.5ZM10 10h2.8v1.3h.1c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.7 2 3.7 4.6v5.2h-3v-4.6c0-1.1 0-2.6-1.6-2.6s-1.9 1.2-1.9 2.5v4.7H10V10Z"/></svg></a>
+        <button type="button" data-copy-link="{{ share_url }}" aria-label="Copier le lien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a1 1 0 0 1 0-1.4l3.5-3.5a3 3 0 1 1 4.2 4.2l-2 2-1.4-1.4 2-2a1 1 0 1 0-1.4-1.4L12 13.4a1 1 0 0 1-1.4 0ZM13.4 10.6a1 1 0 0 1 0 1.4l-3.5 3.5a3 3 0 1 1-4.2-4.2l2-2 1.4 1.4-2 2a1 1 0 1 0 1.4 1.4L12 10.6a1 1 0 0 1 1.4 0Z"/></svg></button>
+        <span class="copy-ok" role="status">Lien copié ✓</span>
       </div>
       {% endwith %}
-      {% endif %}
-    {% endwith %}
-  </section>
-  {% endif %}
 
-  {% if related_articles %}
-  <section class="article-related">
-    <h2>Articles similaires</h2>
-    {% for item in related_articles %}
-      <article class="related-row">
-        <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-        <span>{{ item.published_at|date:'d M Y' }}</span>
-      </article>
-    {% endfor %}
-  </section>
-  {% endif %}
-
-  <section class="article-whatsapp-cta" aria-label="Rejoindre la communauté WhatsApp">
-    <h2>Une question ou envie d’échanger&nbsp;?</h2>
-    <p>Rejoignez notre groupe WhatsApp pour discuter autour de ces sujets, poser vos questions et continuer la réflexion avec la communauté LOGOS.</p>
-    <a
-      class="btn-minimal article-whatsapp-btn"
-      href="https://chat.whatsapp.com/CcFiBPW2ofjLqOrgGKWK29?mode=gi_t"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Rejoindre le groupe WhatsApp
-    </a>
-  </section>
-
-  <section class="post-nav" x-data="{shareOpen:false}">
-    <a href="{% url 'article_list' %}">← Précédent</a>
-    <div class="share-wrap">
-      <button class="share-trigger" @click="shareOpen = !shareOpen" type="button" aria-label="Partager l'article">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18 16a3 3 0 0 0-2.39 1.2l-6.73-3.36a3.1 3.1 0 0 0 0-1.68l6.73-3.36A3 3 0 1 0 15 7a3 3 0 0 0 .06.6L8.33 11A3 3 0 1 0 9 13a3 3 0 0 0-.06-.6l6.73 3.36A3 3 0 1 0 18 16Z"></path>
-        </svg>
-        <span>Partager</span>
-      </button>
-      <div class="share-actions" x-show="shareOpen" x-transition @click.outside="shareOpen = false" x-cloak>
-        <a class="share-icon facebook" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" aria-label="Partager sur Facebook">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.2c0-.9.3-1.5 1.6-1.5h1.7V5c-.3 0-1.4-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.6V11H7v3h2.6v8h3.9Z"></path></svg>
-        </a>
-        <a class="share-icon whatsapp" target="_blank" rel="noopener" href="https://wa.me/?text={{ article.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" aria-label="Partager sur WhatsApp">
-          <svg viewBox="0 0 448 512" aria-hidden="true"><path d="M380.9 97.1C339 55.1 283.2 32 224 32c-122.2 0-221.7 99.5-221.7 221.7c0 39.1 10.2 77.3 29.5 111L0 480l118.4-31c32.6 17.8 69.4 27.2 106 27.2h.1c122.3 0 221.8-99.5 221.8-221.7c0-59.3-23.1-115-65.4-157.4zM224.1 438.7h-.1c-33.2 0-65.7-8.9-94-25.7l-6.7-4l-70.2 18.5l18.8-68.5l-4.3-7c-18.5-29.3-28.2-63.2-28.2-98.2c0-101.7 82.8-184.5 184.7-184.5c49.3 0 95.7 19.2 130.5 54.1c34.8 34.9 54 81.3 53.9 130.7c0 101.8-82.9 184.6-184.4 184.6zm101.1-138.2c-5.5-2.8-32.8-16.1-37.9-17.9c-5.1-1.9-8.8-2.8-12.5 2.8c-3.7 5.6-14.3 17.9-17.6 21.5c-3.2 3.7-6.5 4.2-12 1.4c-32.6-16.3-54-29.1-75.5-66c-5.7-9.8 5.7-9.1 16.3-30.2c1.8-3.7.9-6.9-.5-9.7c-1.4-2.8-12.5-30.1-17.1-41.3c-4.5-10.8-9-9.3-12.5-9.5c-3.2-.2-6.9-.2-10.6-.2c-3.7 0-9.7 1.4-14.8 6.9c-5.1 5.6-19.5 19.1-19.5 46.6c0 27.5 20 54.1 22.8 57.8c2.8 3.7 39.3 60.1 95.2 84.3c35.2 15.2 49 16.5 66.7 14c10.8-1.6 32.8-13.4 37.4-26.3c4.6-12.9 4.6-24 3.2-26.3c-1.3-2.4-5-3.8-10.5-6.5z"></path></svg>
-        </a>
-        <a class="share-icon linkedin" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}" aria-label="Partager sur LinkedIn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8.5A1.5 1.5 0 1 1 6 5.5a1.5 1.5 0 0 1 0 3ZM4.5 19.5h3V10h-3v9.5ZM10 10h2.8v1.3h.1c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.7 2 3.7 4.6v5.2h-3v-4.6c0-1.1 0-2.6-1.6-2.6s-1.9 1.2-1.9 2.5v4.7H10V10Z"></path></svg>
-        </a>
+      <div class="community">
+        <div>
+          <h2>Une question ou envie d'échanger ?</h2>
+          <p>Rejoignez le groupe WhatsApp de LOGOS pour discuter de ces sujets et poursuivre la réflexion.</p>
+        </div>
+        <a class="btn btn-wa" href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">{% include "partials/icon_whatsapp.svg" %} Rejoindre</a>
       </div>
+
+      {% if previous_article or next_article %}
+      <nav class="post-nav" aria-label="Articles précédent et suivant">
+        {% if previous_article %}<a href="{{ previous_article.get_absolute_url }}"><small>← Article précédent</small><strong>{{ previous_article.title }}</strong></a>{% endif %}
+        {% if next_article %}<a class="next" href="{{ next_article.get_absolute_url }}"><small>Article suivant →</small><strong>{{ next_article.title }}</strong></a>{% endif %}
+      </nav>
+      {% endif %}
     </div>
-    <a href="{% url 'article_list' %}">Suivant →</a>
-  </section>
+  </div>
 </article>
+
+{% if related_articles %}
+<section class="container section related">
+  <div class="section-head"><h2>À lire aussi</h2><a href="{% url 'article_list' %}">Tous les articles →</a></div>
+  <div class="cards">{% for article in related_articles %}{% include "partials/card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
 {% endblock %}

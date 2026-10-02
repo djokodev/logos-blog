@@ -1,28 +1,40 @@
-from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import F, Q
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_POST
 
 from .models import Article, Category
+from .tracking import VISITOR_COOKIE, VISITOR_COOKIE_MAX_AGE, get_or_create_visitor_id, register_view
+
+PER_PAGE = 9
+
+
+def _published():
+    return Article.objects.published().select_related("category", "cover").prefetch_related("tags")
 
 
 def article_list(request):
-    articles = Article.objects.published().select_related("category").prefetch_related("tags")
-    categories = Category.objects.all()
-
+    categories = Category.objects.filter(articles__live=True).distinct()
     query = request.GET.get("q", "").strip()
     category_slug = request.GET.get("category", "").strip()
 
-    if query:
-        articles = articles.filter(Q(title__icontains=query) | Q(excerpt__icontains=query) | Q(content__icontains=query))
-
     current_category = None
+    articles = _published()
     if category_slug:
         current_category = get_object_or_404(Category, slug=category_slug)
         articles = articles.filter(category=current_category)
 
-    paginator = Paginator(articles, 3)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    if query:
+        try:
+            ids = [a.pk for a in articles.search(query, operator="or")]
+        except Exception:
+            ids = list(articles.filter(title__icontains=query).values_list("pk", flat=True))
+        preserved = {pk: i for i, pk in enumerate(ids)}
+        results = sorted(articles.filter(pk__in=ids), key=lambda a: preserved.get(a.pk, 0))
+        page_obj = Paginator(results, PER_PAGE).get_page(request.GET.get("page"))
+    else:
+        page_obj = Paginator(articles, PER_PAGE).get_page(request.GET.get("page"))
 
     return render(
         request,
@@ -37,61 +49,48 @@ def article_list(request):
 
 
 def article_detail(request, slug):
-    article = get_object_or_404(
-        Article.objects.published().select_related("category").prefetch_related("tags"),
-        slug=slug,
-    )
-    view_cookie_name = f"article_viewed_{article.pk}"
-    should_increment = not request.COOKIES.get(view_cookie_name)
-
-    if should_increment:
-        Article.objects.filter(pk=article.pk).update(view_count=F("view_count") + 1)
-        article.view_count += 1
-
-    related_articles = (
-        Article.objects.published()
-        .filter(category=article.category)
-        .exclude(pk=article.pk)[:3]
-    )
-
-    response = render(
-        request,
-        "blog/article_detail.html",
-        {
-            "article": article,
-            "related_articles": related_articles,
-        },
-    )
-    if should_increment:
-        response.set_cookie(
-            view_cookie_name,
-            "1",
-            max_age=86400,
-            httponly=True,
-            secure=request.is_secure(),
-            samesite="Lax",
-        )
-    return response
-
-
-@staff_member_required(login_url="/cms/login/")
-def article_preview(request, pk):
-    article = get_object_or_404(
-        Article.objects.select_related("category").prefetch_related("tags"),
-        pk=pk,
-    )
-    related_articles = (
-        Article.objects.published()
-        .filter(category=article.category)
-        .exclude(pk=article.pk)[:3]
-    )
-
+    article = get_object_or_404(_published(), slug=slug)
     return render(
         request,
         "blog/article_detail.html",
         {
             "article": article,
-            "related_articles": related_articles,
+            "related_articles": article.get_related_articles(),
+            "previous_article": article.get_previous_article(),
+            "next_article": article.get_next_article(),
+        },
+    )
+
+
+@require_POST
+def article_view_beacon(request, pk):
+    """Appelée par le navigateur après quelques secondes de lecture."""
+    article = get_object_or_404(Article, pk=pk)
+    visitor_id, is_new = get_or_create_visitor_id(request)
+    counted = register_view(request, article, visitor_id)
+    response = JsonResponse({"counted": counted})
+    if is_new:
+        response.set_cookie(
+            VISITOR_COOKIE,
+            visitor_id,
+            max_age=VISITOR_COOKIE_MAX_AGE,
+            httponly=True,
+            secure=request.is_secure(),
+            samesite="Lax",
+        )
+    response["Cache-Control"] = "no-store"
+    return response
+
+
+@staff_member_required(login_url="/cms/login/")
+def article_preview(request, pk):
+    article = get_object_or_404(Article.objects.select_related("category"), pk=pk)
+    return render(
+        request,
+        "blog/article_detail.html",
+        {
+            "article": article,
+            "related_articles": article.get_related_articles(),
             "preview_mode": True,
         },
     )
@@ -99,13 +98,6 @@ def article_preview(request, pk):
 
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    articles = Article.objects.published().filter(category=category).select_related("category")
-
-    paginator = Paginator(articles, 3)
-    page_obj = paginator.get_page(request.GET.get("page"))
-
-    return render(
-        request,
-        "blog/category_detail.html",
-        {"category": category, "page_obj": page_obj},
-    )
+    articles = _published().filter(category=category)
+    page_obj = Paginator(articles, PER_PAGE).get_page(request.GET.get("page"))
+    return render(request, "blog/category_detail.html", {"category": category, "page_obj": page_obj})

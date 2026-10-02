@@ -1,0 +1,79 @@
+/* LOGOS — confort d'écriture dans le CMS Wagtail */
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; font-display: swap; src: url('../fonts/fraunces-latin-wght-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 200 900; font-display: swap; src: url('../fonts/source-serif-4-latin-opsz-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Source Serif 4'; font-style: italic; font-weight: 200 900; font-display: swap; src: url('../fonts/source-serif-4-latin-opsz-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('../fonts/inter-latin-wght-normal.woff2') format('woff2'); }
+
+:root {
+  /* Barre latérale : bleu nuit LOGOS */
+  --w-color-primary: #0B1F3F;
+  --w-color-primary-hue: 217;
+  --w-color-primary-saturation: 70%;
+  --w-color-primary-lightness: 15%;
+  --w-color-primary-200: #233A63;
+  --w-color-primary-200-hue: 218;
+  --w-color-primary-200-saturation: 48%;
+  --w-color-primary-200-lightness: 26%;
+  /* Boutons et accents : or LOGOS */
+  --w-color-secondary: #8C6210;
+  --w-color-secondary-hue: 40;
+  --w-color-secondary-saturation: 80%;
+  --w-color-secondary-lightness: 31%;
+  --w-color-secondary-400: #6F4D0C;
+  --w-color-secondary-400-hue: 40;
+  --w-color-secondary-400-saturation: 80%;
+  --w-color-secondary-400-lightness: 24%;
+  --w-color-secondary-600: #5A3F0A;
+  --w-color-secondary-600-hue: 40;
+  --w-color-secondary-600-saturation: 80%;
+  --w-color-secondary-600-lightness: 20%;
+  --w-color-secondary-100: #B9862A;
+  --w-color-secondary-100-hue: 39;
+  --w-color-secondary-100-saturation: 63%;
+  --w-color-secondary-100-lightness: 45%;
+  --w-color-secondary-50: #F6EEDC;
+  --w-color-secondary-50-hue: 41;
+  --w-color-secondary-50-saturation: 64%;
+  --w-color-secondary-50-lightness: 91%;
+}
+
+/* Zone de texte riche : rendu proche du site, lisible et aéré */
+.Draftail-Editor .public-DraftEditor-content,
+.Draftail-Editor .DraftEditor-root {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.75;
+}
+.Draftail-Editor .public-DraftEditor-content { min-height: 7rem; padding: .5rem .25rem; }
+.Draftail-Editor h2, .Draftail-Editor .Draftail-block--header-two {
+  font-family: 'Fraunces', Georgia, serif; font-size: 1.7rem; line-height: 1.2; margin: 1.4rem 0 .6rem;
+}
+.Draftail-Editor h3, .Draftail-Editor .Draftail-block--header-three {
+  font-family: 'Fraunces', Georgia, serif; font-size: 1.35rem; margin: 1.2rem 0 .5rem;
+}
+.Draftail-Editor blockquote {
+  border-left: 3px solid #C9972D; padding-left: 1rem; font-style: italic; margin: 1rem 0;
+}
+.Draftail-Editor a { text-decoration-color: #C9972D; }
+.Draftail-Editor .public-DraftEditorPlaceholder-root { font-family: 'Source Serif 4', Georgia, serif; font-size: 1.15rem; }
+
+/* Titre de l'article bien visible */
+.w-panel input[name="title"], #id_title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.9rem !important;
+  font-weight: 600;
+}
+
+/* Tableau de bord : statistiques */
+.logos-stats { background: var(--w-color-surface-page, #fff); }
+.logos-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0 1.5rem; }
+.logos-kpis div { border: 1px solid var(--w-color-border-furniture, #e0e0e0); border-radius: 10px; padding: 1rem 1.1rem; }
+.logos-kpis strong { display: block; font-size: 1.9rem; line-height: 1.1; font-family: 'Fraunces', Georgia, serif; }
+.logos-kpis span { font-size: .85rem; opacity: .75; }
+.logos-spark { display: flex; align-items: flex-end; gap: 6px; height: 110px; padding: 0 .25rem; border-bottom: 1px solid var(--w-color-border-furniture, #e0e0e0); }
+.logos-spark .bar { flex: 1; height: max(var(--h), 3%); background: #C9972D; border-radius: 4px 4px 0 0; position: relative; opacity: .85; }
+.logos-spark .bar:hover { opacity: 1; }
+.logos-spark .bar span { position: absolute; top: -1.3rem; left: 0; right: 0; text-align: center; font-size: .7rem; opacity: 0; }
+.logos-spark .bar:hover span { opacity: 1; }
+.logos-spark-legend { font-size: .8rem; opacity: .7; margin: .5rem 0 1.25rem; }

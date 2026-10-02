@@ -44,6 +44,9 @@ END
 echo "Exécution des migrations Django..."
 python manage.py migrate --noinput
 
+echo "Mise à jour de l'index de recherche..."
+python manage.py update_index > /dev/null 2>&1 || echo "update_index a échoué (non bloquant)"
+
 echo "Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 

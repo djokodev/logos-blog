@@ -151,3 +151,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WAGTAIL_SITE_NAME = "LOGOS"
 WAGTAILADMIN_BASE_URL = os.environ.get("WAGTAILADMIN_BASE_URL", "http://127.0.0.1:8000")
+
+# Version des fichiers CSS/JS (cache-busting). À incrémenter à chaque refonte visuelle.
+ASSET_VERSION = "20261002a"
+
+# Recherche Wagtail (PostgreSQL full-text si disponible)
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+        "SEARCH_CONFIG": "french",
+    }
+}

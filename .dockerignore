@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+venv
+media
+staticfiles
+db.sqlite3
+.ops
+**/__pycache__
+*.pyc
+.DS_Store
+assets

@@ -1,97 +1,105 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    (function () { try { var t = localStorage.getItem("logos-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {} })();
+  </script>
   <title>{% block title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}Bibliothèque éditoriale chrétienne francophone.{% endblock %}">
-  <link rel="canonical" href="{% block canonical_url %}{% if SITE_URL %}{{ SITE_URL }}{{ request.path }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}">
-  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ BASE_URL }}{{ request.path }}{% endblock %}">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-  <meta property="og:url" content="{% block og_url %}{% if SITE_URL %}{{ SITE_URL }}{{ request.path }}{% else %}{{ request.build_absolute_uri }}{% endif %}{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}{% static 'images/logo_LOGOS.png' %}?v=20260528c{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ BASE_URL }}{{ request.path }}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ BASE_URL }}{% static 'images/logo_LOGOS.png' %}{% endblock %}">
   <meta property="og:image:alt" content="{% block og_image_alt %}{{ SITE_NAME }}{% endblock %}">
   <meta property="og:site_name" content="{{ SITE_NAME }}">
   <meta name="twitter:card" content="{% block twitter_card %}summary_large_image{% endblock %}">
-  <meta name="twitter:title" content="{% block twitter_title %}{% block twitter_title_inner %}{{ SITE_NAME }}{% endblock %}{% endblock %}">
-  <meta name="twitter:description" content="{% block twitter_description %}Questions sincères. Recherche rigoureuse. Foi chrétienne.{% endblock %}">
-  <meta name="twitter:image" content="{% block twitter_image %}{% if SITE_URL %}{{ SITE_URL }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% endif %}{% static 'images/logo_LOGOS.png' %}?v=20260528c{% endblock %}">
-  <link rel="icon" type="image/png" href="{% static 'images/logo_LOGOS.png' %}?v=20260528c">
-  <link rel="apple-touch-icon" href="{% static 'images/logo_LOGOS.png' %}?v=20260528c">
-  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20260531a">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ BASE_URL }}{% static 'images/logo_LOGOS.png' %}{% endblock %}">
+  <meta name="theme-color" content="#F3EFE7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0D121B" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="{% static 'images/logo_LOGOS.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'images/logo_LOGOS.png' %}">
+  <link rel="alternate" type="application/rss+xml" title="LOGOS — articles" href="{% url 'article_feed' %}">
+  <link rel="preload" href="{% static 'fonts/fraunces-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/source-serif-4-latin-opsz-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/inter-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/site.css' %}?v={{ ASSET_VERSION }}">
   {% block extra_head %}{% endblock %}
-  <style>
-    .social-links {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      justify-self: end;
-    }
-    .social-icon-link {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      min-height: 44px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .yt-icon-link {
-      background: #fff1f0;
-      border: 1px solid #ffd0cc;
-      color: #ff2a20;
-    }
-    .wa-icon-link {
-      background: #ffffff;
-      border: 1px solid #d7dbe2;
-      color: #000000;
-    }
-    @media (max-width: 860px) {
-      .social-links {
-        grid-column: 1 / -1;
-        justify-self: center;
-        margin-top: 0.75rem;
-      }
-    }
-  </style>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="{% static 'js/logos.js' %}?v={{ ASSET_VERSION }}"></script>
 </head>
 <body>
-  <header class="site-header" x-data="{open:false}">
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  {% block progress %}{% endblock %}
+  <header class="site-header">
     <div class="container nav-wrap">
-      <a class="logo" href="{% url 'home' %}">
-        <img class="logo-mark" src="{% static 'images/logo_LOGOS.png' %}" alt="LOGOS">
+      <a class="logo" href="{% url 'home' %}" aria-label="LOGOS — accueil">
+        <img src="{% static 'images/logo_LOGOS.png' %}" alt="" width="32" height="32">
         <span>LOGOS</span>
       </a>
-      <button class="mobile-btn" @click="open=!open">Menu</button>
-      <nav :class="open ? 'open' : ''">
-        <a href="{% url 'home' %}">Accueil</a>
-        <a href="{% url 'article_list' %}">Articles</a>
-        <a href="{% url 'about' %}">À propos</a>
+      {% with p=request.path %}
+      <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
+        <a href="{% url 'home' %}"{% if p == '/' %} aria-current="page"{% endif %}>Accueil</a>
+        <a href="{% url 'article_list' %}"{% if '/articles/' in p %} aria-current="page"{% endif %}>Articles</a>
+        <a href="{% url 'about' %}"{% if p == '/a-propos/' %} aria-current="page"{% endif %}>À propos</a>
       </nav>
-      <div class="social-links">
-        <a class="social-icon-link yt-icon-link" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.6A3 3 0 0 0 .5 7.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-4.8ZM9.6 15.4V8.6L15.8 12l-6.2 3.4Z"/>
-          </svg>
+      {% endwith %}
+      <div class="nav-tools">
+        <a class="icon-btn" href="{% url 'article_list' %}#recherche" aria-label="Rechercher un article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.96 12.06l4.24 4.24-1.4 1.4-4.24-4.24A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
         </a>
-        <a class="social-icon-link wa-icon-link" href="https://chat.whatsapp.com/CcFiBPW2ofjLqOrgGKWK29?mode=gi_t" target="_blank" rel="noopener" aria-label="Groupe WhatsApp LOGOS">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2a10 10 0 0 0-8.8 14.8L2 22l5.4-1.2A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-3.2.7.7-3.1-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-5.8c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1l-.4.5c-.1.1-.2.2-.4.1-.2-.1-.8-.3-1.5-.9a5.8 5.8 0 0 1-1.1-1.4c-.1-.2 0-.3.1-.4l.3-.3.2-.3c.1-.1.1-.2 0-.3l-.6-1.5c-.1-.2-.2-.2-.3-.2h-.3c-.1 0-.3 0-.5.2s-.7.6-.7 1.4c0 .8.6 1.6.7 1.7.1.1 1.2 1.9 2.9 2.6 1.7.7 1.7.5 2 .5.3 0 1.1-.4 1.2-.9.2-.5.2-.9.1-.9 0-.1-.2-.1-.4-.2Z"/>
-          </svg>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Changer de thème (clair / sombre)">
+          <svg class="theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a8.5 8.5 0 1 0 11.5 11.5Z"/></svg>
+          <svg class="theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0-5 1 3h-2l1-3Zm0 20-1-3h2l-1 3ZM2 12l3-1v2l-3-1Zm20 0-3 1v-2l3 1ZM4.9 4.9l2.8 1.4-1.4 1.4-1.4-2.8Zm14.2 14.2-2.8-1.4 1.4-1.4 1.4 2.8Zm0-14.2-1.4 2.8-1.4-1.4 2.8-1.4ZM4.9 19.1l1.4-2.8 1.4 1.4-2.8 1.4Z"/></svg>
+        </button>
+        <a class="icon-btn yt" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="Chaîne YouTube LOGOS">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.6A3 3 0 0 0 .5 7.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-4.8ZM9.6 15.4V8.6L15.8 12l-6.2 3.4Z"/></svg>
         </a>
+        <a class="icon-btn" href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener" aria-label="Groupe WhatsApp LOGOS">
+          {% include "partials/icon_whatsapp.svg" %}
+        </a>
+        <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-controls="main-nav" aria-expanded="false" aria-label="Ouvrir le menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6Zm0 5h18v2H3v-2Zm0 5h18v2H3v-2Z"/></svg>
+        </button>
       </div>
     </div>
   </header>
 
-  <main>{% block content %}{% endblock %}</main>
+  <main id="contenu">{% block content %}{% endblock %}</main>
 
   <footer class="site-footer">
-    <div class="container foot-minimal">
-      <strong>LOGOS</strong>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="{% url 'home' %}"><img src="{% static 'images/logo_LOGOS.png' %}" alt="" width="32" height="32"><span>LOGOS</span></a>
+          <p>Un carnet de recherche sur les grandes questions spirituelles : examiner, vérifier les sources, et choisir en conscience.</p>
+        </div>
+        <div>
+          <h2>Explorer</h2>
+          <ul>
+            <li><a href="{% url 'article_list' %}">Tous les articles</a></li>
+            {% for cat in GLOBAL_CATEGORIES|slice:":4" %}<li><a href="{% url 'category_detail' cat.slug %}">{{ cat.name }}</a></li>{% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h2>Échanger</h2>
+          <ul>
+            <li><a href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">Groupe WhatsApp</a></li>
+            <li><a href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener">YouTube</a></li>
+            <li><a href="{% url 'about' %}">À propos</a></li>
+            <li><a href="{% url 'article_feed' %}">Flux RSS</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© {% now "Y" %} LOGOS</span>
+        <em>« Garde la sagesse et la réflexion. » — Proverbes 3:21</em>
+      </div>
     </div>
   </footer>
 </body>

@@ -1,28 +1,22 @@
 {% extends 'base.html' %}
 {% block title %}{{ category.name }} | LOGOS{% endblock %}
+{% block meta_description %}{{ category.description|default:category.name }}{% endblock %}
 {% block content %}
-<section class="container section section-tight">
-  <div class="list-header">
-    <h1>{{ category.name }}</h1>
-    <p>{{ category.description|default:'Articles liés à cette thématique.' }}</p>
-  </div>
+<section class="container page-head">
+  <p class="eyebrow">Catégorie</p>
+  <h1>{{ category.name }}</h1>
+  <p>{{ category.description|default:"Les articles de LOGOS sur cette thématique." }}</p>
 </section>
-
-<section class="container section section-list-stream">
-  {% for article in page_obj %}
-  <article class="stream-item {% cycle '' 'stream-item-reverse' %}">
-    <a class="stream-copy" href="{{ article.get_absolute_url }}">
-      <p class="stream-category">{{ article.category.name }}</p>
-      <h2>{{ article.title }}</h2>
-      <p class="stream-excerpt">{{ article.excerpt }}</p>
-      <div class="stream-meta">{{ article.published_at|date:'d M Y' }} · {{ article.reading_time }} min · {{ article.view_count }} vues</div>
-    </a>
-    <a class="stream-media" href="{{ article.get_absolute_url }}">
-      {% if article.cover_image %}<img src="{{ article.cover_image.url }}" alt="{{ article.title }}">{% else %}<div class="media-placeholder">LOGOS</div>{% endif %}
-    </a>
-  </article>
-  {% empty %}
-  <p>Aucun article dans cette catégorie.</p>
-  {% endfor %}
+<section class="container section" style="padding-top:1.5rem">
+  {% if page_obj.object_list %}
+  <div class="cards">{% for article in page_obj %}{% include "partials/card.html" %}{% endfor %}</div>
+  {% else %}<p class="empty">Aucun article dans cette catégorie pour le moment.</p>{% endif %}
+  {% if page_obj.paginator.num_pages > 1 %}
+  <nav class="pager" aria-label="Pagination">
+    <span>{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← Précédent</a>{% endif %}</span>
+    <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    <span>{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Suivant →</a>{% endif %}</span>
+  </nav>
+  {% endif %}
 </section>
 {% endblock %}

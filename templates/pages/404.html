@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Page introuvable | LOGOS{% endblock %}
 {% block content %}
-<section class="container section center">
-  <h1>404</h1>
-  <p>La page demandée n'existe pas ou a été déplacée.</p>
-  <a class="cta" href="{% url 'home' %}">Retour à l'accueil</a>
+<section class="container notfound">
+  <p class="eyebrow">Erreur 404</p>
+  <h1>Cette page s'est égarée.</h1>
+  <p>Le lien est peut-être ancien, ou l'article a changé d'adresse. Vous pouvez repartir de la bibliothèque.</p>
+  <a class="btn btn-primary" href="{% url 'article_list' %}">Voir les articles</a>
 </section>
 {% endblock %}

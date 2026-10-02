@@ -1,3 +1,32 @@
+# Déploiement
+
+## Mettre en production une nouvelle version
+
+Sur le VPS :
+
+```bash
+bash /root/logos/scripts/deploy.sh          # branche main
+```
+
+Le script fait une sauvegarde complète, récupère le code depuis GitHub, reconstruit
+l'image, redémarre (les migrations et `collectstatic` sont lancés automatiquement par
+`docker/entrypoint.sh`) puis vérifie que le site répond.
+
+## Tâches planifiées (crontab root)
+
+```cron
+30 2 * * *  cd /root/logos && /bin/bash scripts/backup/backup_weekly.sh >/dev/null 2>&1
+*/5 * * * * cd /root/logos && docker compose exec -T web python manage.py publish_scheduled >/dev/null 2>&1
+```
+
+La seconde ligne publie automatiquement les articles programmés (onglet « Publication »
+de l'éditeur, champ « Date de mise en ligne »).
+
+## Architecture
+
+Cloudflare (proxy) → Nginx de l'hôte (HTTPS Let's Encrypt, `/etc/nginx/sites-available/logos.djokodev.com`)
+→ conteneur Nginx (port local 8082, fichiers statiques et media) → Gunicorn/Django → PostgreSQL.
+
 # Deployment Notes
 
 ## Upload Limits (CMS / Wagtail)

@@ -1,0 +1,5 @@
+<div class="meta">
+  <span><time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:'j F Y' }}</time></span>
+  <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ article.reading_time }} min de lecture</span>
+  {% if article.view_count %}<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>{{ article.view_count }} lecteur{{ article.view_count|pluralize }}</span>{% endif %}
+</div>

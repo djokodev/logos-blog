@@ -19,8 +19,8 @@ services:
     build: .
     container_name: logos_blog_web
     restart: always
+    env_file: .env
     volumes:
-      - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     environment:

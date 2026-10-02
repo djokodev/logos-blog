@@ -48,6 +48,21 @@ if [[ -z "${AWS_BIN}" ]]; then
   exit 1
 fi
 
+# --- Surveillance (healthchecks.io ou compatible) ---------------------------
+# Si HEALTHCHECK_URL est défini, on signale début / succès / échec.
+# Sans signal de succès pendant plus de 26 h, le service envoie une alerte (email, Telegram…).
+hc_ping() {
+  if [[ -n "${HEALTHCHECK_URL:-}" ]]; then
+    curl -fsS -m 10 --retry 3 "${HEALTHCHECK_URL}${1:-}" >/dev/null 2>&1 || true
+  fi
+}
+on_error() {
+  echo "$(iso_now) [ERROR] Backup FAILED (line ${1:-?})."
+  hc_ping /fail
+}
+trap 'on_error ${LINENO}' ERR
+hc_ping /start
+
 mkdir -p "$(dirname "${BACKUP_LOG_FILE}")"
 touch "${BACKUP_LOG_FILE}"
 exec > >(tee -a "${BACKUP_LOG_FILE}") 2>&1
@@ -65,7 +80,7 @@ timestamp="$(date +%F_%H%M)"
 backup_dir="${BACKUP_BASE_DIR}/${timestamp}"
 mkdir -p "${backup_dir}"
 
-echo "$(iso_now) [INFO] Starting weekly backup in ${backup_dir}"
+echo "$(iso_now) [INFO] Starting backup in ${backup_dir}"
 
 db_dump_file="${backup_dir}/db.sql.gz"
 media_archive_file="${backup_dir}/media.tar.gz"
@@ -79,6 +94,16 @@ docker compose -f "${COMPOSE_DIR}/docker-compose.yml" exec -T \
   pg_dump -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" --no-owner --no-privileges \
   | gzip -9 > "${db_dump_file}"
 
+db_size=$(stat -c %s "${db_dump_file}")
+if (( db_size < 1000 )); then
+  echo "$(iso_now) [ERROR] Database dump looks empty (${db_size} bytes)."
+  false
+fi
+
+echo "$(iso_now) [INFO] Exporting portable content (JSON)..."
+docker compose -f "${COMPOSE_DIR}/docker-compose.yml" exec -T web \
+  python manage.py export_content | gzip -9 > "${backup_dir}/content.json.gz"
+
 echo "$(iso_now) [INFO] Archiving media volume ${MEDIA_VOLUME_NAME}..."
 docker run --rm \
   -v "${MEDIA_VOLUME_NAME}:/data:ro" \
@@ -89,7 +114,7 @@ docker run --rm \
 echo "$(iso_now) [INFO] Generating checksums and manifest..."
 (
   cd "${backup_dir}"
-  sha256sum db.sql.gz media.tar.gz > "${checksums_file##*/}"
+  sha256sum db.sql.gz media.tar.gz content.json.gz > "${checksums_file##*/}"
 )
 
 cat > "${manifest_file}" <<EOF
@@ -100,6 +125,7 @@ cat > "${manifest_file}" <<EOF
   "database": "${POSTGRES_DB}",
   "db_dump_file": "$(basename "${db_dump_file}")",
   "media_archive_file": "$(basename "${media_archive_file}")",
+  "content_export_file": "content.json.gz",
   "checksums_file": "$(basename "${checksums_file}")"
 }
 EOF
@@ -156,4 +182,5 @@ if [[ -n "${prefixes_raw}" ]]; then
   fi
 fi
 
-echo "$(iso_now) [INFO] Weekly backup completed successfully."
+echo "$(iso_now) [INFO] Backup completed successfully."
+hc_ping
