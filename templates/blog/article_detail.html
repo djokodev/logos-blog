@@ -127,12 +127,6 @@
         <a class="btn btn-wa" href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">{% include "partials/icon_whatsapp.svg" %} Rejoindre</a>
       </div>
 
-      {% if previous_article or next_article %}
-      <nav class="post-nav" aria-label="Articles précédent et suivant">
-        {% if previous_article %}<a href="{{ previous_article.get_absolute_url }}"><small>← Article précédent</small><strong>{{ previous_article.title }}</strong></a>{% endif %}
-        {% if next_article %}<a class="next" href="{{ next_article.get_absolute_url }}"><small>Article suivant →</small><strong>{{ next_article.title }}</strong></a>{% endif %}
-      </nav>
-      {% endif %}
     </div>
   </div>
 </article>

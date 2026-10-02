@@ -56,8 +56,6 @@ def article_detail(request, slug):
         {
             "article": article,
             "related_articles": article.get_related_articles(),
-            "previous_article": article.get_previous_article(),
-            "next_article": article.get_next_article(),
         },
     )
 
