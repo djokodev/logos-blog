@@ -40,7 +40,7 @@
 {% block progress %}<div class="progress" aria-hidden="true"></div>{% endblock %}
 
 {% block content %}
-{% if preview_mode %}<div class="preview-banner">Aperçu — cette version n'est pas publiée.</div>{% endif %}
+{% if preview_mode %}<div class="preview-banner">Aperçu : cette version n'est pas publiée.</div>{% endif %}
 <article data-article
          {% if preview_mode %}data-preview{% endif %}
          data-view-url="{% if article.pk %}{% url 'article_view_beacon' article.pk %}{% endif %}"
@@ -90,7 +90,7 @@
         <section aria-label="Vidéo associée">
           <div class="section-head"><h2>Vidéo associée</h2><a href="{{ article.youtube_url }}" target="_blank" rel="noopener">Voir sur YouTube →</a></div>
           <div class="video-wrap">
-            <iframe src="{{ embed }}?rel=0" title="Vidéo YouTube — {{ article.title }}" loading="lazy"
+            <iframe src="{{ embed }}?rel=0" title="Vidéo YouTube : {{ article.title }}" loading="lazy"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
@@ -111,7 +111,7 @@
       {% with share_url=BASE_URL|add:article.get_absolute_url %}
       <div class="share">
         <span class="share-label">Partager</span>
-        <a class="s-wa" href="https://wa.me/?text={{ article.title|urlencode }}%20%E2%80%94%20{{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">{% include "partials/icon_whatsapp.svg" %}</a>
+        <a class="s-wa" href="https://wa.me/?text={{ article.title|urlencode }}%20%3A%20{{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">{% include "partials/icon_whatsapp.svg" %}</a>
         <a class="s-fb" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.2c0-.9.3-1.5 1.6-1.5h1.7V5c-.3 0-1.4-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.6V11H7v3h2.6v8h3.9Z"/></svg></a>
         <a class="s-li" href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url|urlencode }}" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8.5A1.5 1.5 0 1 1 6 5.5a1.5 1.5 0 0 1 0 3ZM4.5 19.5h3V10h-3v9.5ZM10 10h2.8v1.3h.1c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.7 2 3.7 4.6v5.2h-3v-4.6c0-1.1 0-2.6-1.6-2.6s-1.9 1.2-1.9 2.5v4.7H10V10Z"/></svg></a>
         <button type="button" data-copy-link="{{ share_url }}" aria-label="Copier le lien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a1 1 0 0 1 0-1.4l3.5-3.5a3 3 0 1 1 4.2 4.2l-2 2-1.4-1.4 2-2a1 1 0 1 0-1.4-1.4L12 13.4a1 1 0 0 1-1.4 0ZM13.4 10.6a1 1 0 0 1 0 1.4l-3.5 3.5a3 3 0 1 1-4.2-4.2l2-2 1.4 1.4-2 2a1 1 0 1 0 1.4 1.4L12 10.6a1 1 0 0 1 1.4 0Z"/></svg></button>

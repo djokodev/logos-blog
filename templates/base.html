@@ -24,7 +24,7 @@
   <meta name="theme-color" content="#F3EFE7">
   <link rel="icon" type="image/png" href="{% static 'images/logo_LOGOS.png' %}">
   <link rel="apple-touch-icon" href="{% static 'images/logo_LOGOS.png' %}">
-  <link rel="alternate" type="application/rss+xml" title="LOGOS — articles" href="{% url 'article_feed' %}">
+  <link rel="alternate" type="application/rss+xml" title="LOGOS, les articles" href="{% url 'article_feed' %}">
   <link rel="preload" href="{% static 'fonts/fraunces-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{% static 'fonts/source-serif-4-latin-opsz-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{% static 'fonts/inter-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
@@ -37,7 +37,7 @@
   {% block progress %}{% endblock %}
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="logo" href="{% url 'home' %}" aria-label="LOGOS — accueil">
+      <a class="logo" href="{% url 'home' %}" aria-label="LOGOS, accueil">
         <img src="{% static 'images/logo_LOGOS.png' %}" alt="" width="32" height="32">
         <span>LOGOS</span>
       </a>

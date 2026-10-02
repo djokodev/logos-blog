@@ -5,7 +5,7 @@ from .models import Article
 
 
 class LatestArticlesFeed(Feed):
-    title = "LOGOS — Examiner la foi, chercher la vérité"
+    title = "LOGOS : examiner la foi, chercher la vérité"
     link = "/articles/"
     description = "Les derniers articles publiés sur LOGOS."
 

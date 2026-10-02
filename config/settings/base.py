@@ -153,7 +153,7 @@ WAGTAIL_SITE_NAME = "LOGOS"
 WAGTAILADMIN_BASE_URL = os.environ.get("WAGTAILADMIN_BASE_URL", "http://127.0.0.1:8000")
 
 # Version des fichiers CSS/JS (cache-busting). À incrémenter à chaque refonte visuelle.
-ASSET_VERSION = "20261002b"
+ASSET_VERSION = "20261002c"
 
 # Recherche Wagtail (PostgreSQL full-text si disponible)
 WAGTAILSEARCH_BACKENDS = {
