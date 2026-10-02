@@ -22,13 +22,12 @@ def global_context(request):
         "SITE_NAME": "LOGOS",
         "SITE_TAGLINE": "Examiner la foi, chercher la vérité",
         "SITE_DESCRIPTION": (
-            "Carnet de recherche sur les grandes questions spirituelles : histoire des religions, "
-            "Bible, foi et raison, explorées avec honnêteté et rigueur."
+            "Les grandes questions spirituelles examinées avec honnêteté et rigueur : histoire des religions, "
+            "Bible, foi et raison."
         ),
         "SITE_URL": settings.SITE_URL,
         "BASE_URL": base_url,
         "ASSET_VERSION": getattr(settings, "ASSET_VERSION", "1"),
-        "YOUTUBE_URL": "https://www.youtube.com/@logos_fr",
         "WHATSAPP_GROUP_URL": WHATSAPP_GROUP_URL,
         "GLOBAL_CATEGORIES": categories,
     }

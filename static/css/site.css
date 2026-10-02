@@ -53,24 +53,6 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0D121B;
-    --surface: #141B27;
-    --surface-2: #1B2433;
-    --ink: #ECE7DC;
-    --ink-2: #D6D0C4;
-    --muted: #A1A8B4;
-    --line: rgba(236, 231, 220, 0.12);
-    --line-strong: rgba(236, 231, 220, 0.24);
-    --night: #ECE7DC;
-    --gold: #D9AE55;
-    --gold-ink: #E2BB68;
-    --gold-soft: rgba(217, 174, 85, 0.14);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-    color-scheme: dark;
-  }
-}
 
 /* --- Base ----------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -167,13 +149,7 @@ h1, h2, h3, h4 {
 }
 .icon-btn:hover { background: var(--surface-2); }
 .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
-.icon-btn.yt { color: #E1251B; }
-:root[data-theme="dark"] .icon-btn.yt { color: #FF5A50; }
 .theme-icon-dark { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-icon-dark { display: block; }
-  :root:not([data-theme="light"]) .theme-icon-light { display: none; }
-}
 :root[data-theme="dark"] .theme-icon-dark { display: block; }
 :root[data-theme="dark"] .theme-icon-light { display: none; }
 .menu-btn { display: none; }
@@ -194,6 +170,7 @@ h1, h2, h3, h4 {
 /* --- Accueil --------------------------------------------------------------- */
 .hero { padding-block: clamp(3rem, 9vw, 7rem) clamp(2rem, 5vw, 3.5rem); }
 .hero h1 {
+  margin-bottom: 2rem;
   font-size: clamp(2.6rem, 6.4vw, 5.2rem);
   font-weight: 500;
   letter-spacing: -0.025em;
@@ -275,12 +252,8 @@ a.chip:hover { background: color-mix(in srgb, var(--gold) 26%, transparent); }
 /* Verset */
 .verse {
   position: relative; margin: 0;
-  padding: 2.6rem clamp(1.5rem, 3vw, 2.5rem) clamp(1.4rem, 3vw, 2rem);
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-}
-.verse::before {
-  content: "“"; position: absolute; top: .05em; left: .3em;
-  font: 600 5rem/1 var(--font-display); color: var(--gold); opacity: .55;
 }
 .verse p { font: italic 400 clamp(1.2rem, 2vw, 1.45rem)/1.55 var(--font-read) !important; color: var(--ink) !important; margin: 0 0 .9rem !important; }
 .verse cite { font: 600 .82rem/1.3 var(--font-ui); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); }
@@ -405,7 +378,7 @@ a.chip:hover { background: color-mix(in srgb, var(--gold) 26%, transparent); }
 .callout--retenir { background: var(--gold-soft); }
 
 .prose blockquote.verse {
-  margin: 2.4em 0; padding: 2.6rem clamp(1.5rem, 3vw, 2.5rem) clamp(1.4rem, 3vw, 2rem);
+  margin: 2.4em 0; padding: clamp(1.4rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
   border: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: var(--radius); font-style: normal;
 }
 

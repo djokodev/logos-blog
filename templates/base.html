@@ -21,8 +21,7 @@
   <meta name="twitter:title" content="{% block twitter_title %}{{ SITE_NAME }} | {{ SITE_TAGLINE }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
   <meta name="twitter:image" content="{% block twitter_image %}{{ BASE_URL }}{% static 'images/logo_LOGOS.png' %}{% endblock %}">
-  <meta name="theme-color" content="#F3EFE7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0D121B" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F3EFE7">
   <link rel="icon" type="image/png" href="{% static 'images/logo_LOGOS.png' %}">
   <link rel="apple-touch-icon" href="{% static 'images/logo_LOGOS.png' %}">
   <link rel="alternate" type="application/rss+xml" title="LOGOS — articles" href="{% url 'article_feed' %}">
@@ -57,9 +56,6 @@
           <svg class="theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a8.5 8.5 0 1 0 11.5 11.5Z"/></svg>
           <svg class="theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0-5 1 3h-2l1-3Zm0 20-1-3h2l-1 3ZM2 12l3-1v2l-3-1Zm20 0-3 1v-2l3 1ZM4.9 4.9l2.8 1.4-1.4 1.4-1.4-2.8Zm14.2 14.2-2.8-1.4 1.4-1.4 1.4 2.8Zm0-14.2-1.4 2.8-1.4-1.4 2.8-1.4ZM4.9 19.1l1.4-2.8 1.4 1.4-2.8 1.4Z"/></svg>
         </button>
-        <a class="icon-btn yt" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="Chaîne YouTube LOGOS">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.6A3 3 0 0 0 .5 7.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-4.8ZM9.6 15.4V8.6L15.8 12l-6.2 3.4Z"/></svg>
-        </a>
         <a class="icon-btn" href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener" aria-label="Groupe WhatsApp LOGOS">
           {% include "partials/icon_whatsapp.svg" %}
         </a>
@@ -77,7 +73,7 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a class="logo" href="{% url 'home' %}"><img src="{% static 'images/logo_LOGOS.png' %}" alt="" width="32" height="32"><span>LOGOS</span></a>
-          <p>Un carnet de recherche sur les grandes questions spirituelles : examiner, vérifier les sources, et choisir en conscience.</p>
+          <p>Les grandes questions spirituelles, examinées avec honnêteté : remonter aux sources, vérifier, réfléchir et choisir en conscience.</p>
         </div>
         <div>
           <h2>Explorer</h2>
@@ -90,7 +86,6 @@
           <h2>Échanger</h2>
           <ul>
             <li><a href="{{ WHATSAPP_GROUP_URL }}" target="_blank" rel="noopener">Groupe WhatsApp</a></li>
-            <li><a href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener">YouTube</a></li>
             <li><a href="{% url 'about' %}">À propos</a></li>
             <li><a href="{% url 'article_feed' %}">Flux RSS</a></li>
           </ul>
@@ -98,7 +93,7 @@
       </div>
       <div class="footer-bottom">
         <span>© {% now "Y" %} LOGOS</span>
-        <em>« Garde la sagesse et la réflexion. » — Proverbes 3:21</em>
+        <em>« Garde la sagesse et la réflexion. » Proverbes 3:21</em>
       </div>
     </div>
   </footer>
