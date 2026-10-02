@@ -10,45 +10,25 @@
   </div>
 </section>
 
-{% if featured_article %}
-<section class="container" aria-label="Article à la une">
-  <a class="feature" href="{{ featured_article.get_absolute_url }}">
-    <div class="feature-media">
-      {% if featured_article.cover %}
-        {% picture featured_article.cover fill-{800x560,1400x980} format-{webp,jpeg} sizes="(max-width: 860px) 100vw, 640px" alt="" %}
-      {% elif featured_article.cover_image %}
-        <img src="{{ featured_article.cover_image.url }}" alt="">
-      {% else %}
-        <div class="media-placeholder">LOGOS</div>
-      {% endif %}
-    </div>
-    <div class="feature-body">
-      <span class="chip">{{ featured_article.category.name }}</span>
-      <h2 class="sr-only">À la une</h2>
-      <h3 style="margin-top:1rem">{{ featured_article.title }}</h3>
-      <p>{{ featured_article.excerpt }}</p>
-      {% with article=featured_article %}{% include "partials/meta.html" %}{% endwith %}
-      <span class="read-more" style="margin-top:1.4rem">Lire l'article</span>
-    </div>
-  </a>
-</section>
-{% endif %}
+<section class="container stream" id="articles" aria-label="Articles">
+  {% for article in page_obj %}
+    {% include "partials/feature.html" with reverse=forloop.counter|divisibleby:2 %}
+  {% empty %}
+    <p class="empty">Les premiers articles arrivent très bientôt.</p>
+  {% endfor %}
 
-{% if other_articles %}
-<section class="container section">
-  <div class="section-head">
-    <h2>Derniers articles</h2>
-    <a href="{% url 'article_list' %}">Tout voir →</a>
-  </div>
-  <div class="cards">
-    {% for article in other_articles %}{% include "partials/card.html" %}{% endfor %}
-  </div>
+  {% if page_obj.paginator.num_pages > 1 %}
+  <nav class="pagination" aria-label="Pagination des articles">
+    {% if page_obj.has_previous %}<a class="btn" href="?page={{ page_obj.previous_page_number }}#articles">← Précédent</a>{% else %}<span class="btn is-disabled">← Précédent</span>{% endif %}
+    <div class="pages">
+      {% for n in page_obj.paginator.page_range %}
+        {% if n == page_obj.number %}<span class="page is-current" aria-current="page">{{ n }}</span>{% else %}<a class="page" href="?page={{ n }}#articles">{{ n }}</a>{% endif %}
+      {% endfor %}
+    </div>
+    {% if page_obj.has_next %}<a class="btn" href="?page={{ page_obj.next_page_number }}#articles">Suivant →</a>{% else %}<span class="btn is-disabled">Suivant →</span>{% endif %}
+  </nav>
+  {% endif %}
 </section>
-{% endif %}
-
-{% if not featured_article %}
-<section class="container section"><p class="empty">Les premiers articles arrivent très bientôt.</p></section>
-{% endif %}
 
 <section class="container section manifesto">
   <div>

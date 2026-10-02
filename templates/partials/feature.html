@@ -1,0 +1,19 @@
+{% load wagtailimages_tags %}
+<a class="feature{% if reverse %} feature--reverse{% endif %}" href="{{ article.get_absolute_url }}">
+  <div class="feature-media">
+    {% if article.cover %}
+      {% picture article.cover fill-{960x540,1600x900} format-{webp,jpeg} sizes="(max-width: 860px) 100vw, 720px" alt="" loading="lazy" %}
+    {% elif article.cover_image %}
+      <img src="{{ article.cover_image.url }}" alt="" loading="lazy">
+    {% else %}
+      <div class="media-placeholder">LOGOS</div>
+    {% endif %}
+  </div>
+  <div class="feature-body">
+    <span class="chip">{{ article.category.name }}</span>
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.excerpt }}</p>
+    {% include "partials/meta.html" %}
+    <span class="read-more">Lire l'article</span>
+  </div>
+</a>
